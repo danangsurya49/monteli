@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
-class userdetailprodukscreen extends StatefulWidget {
+class user_detail_produkscreen extends StatefulWidget {
   final Map<String, dynamic> product; // Untuk menerima data produk
 
-  const userdetailprodukscreen({super.key, required this.product});
+  const user_detail_produkscreen({super.key, required this.product});
 
   @override
-  State<userdetailprodukscreen> createState() => _userdetailprodukscreenState();
+  State<user_detail_produkscreen> createState() =>
+      _user_detail_produkscreenState();
 }
 
-class _userdetailprodukscreenState extends State<userdetailprodukscreen> {
+class _user_detail_produkscreenState extends State<user_detail_produkscreen> {
   bool _isDescriptionExpanded = false;
 
   @override
@@ -17,9 +18,9 @@ class _userdetailprodukscreenState extends State<userdetailprodukscreen> {
     // Ambil list deskripsi atau kosongkan jika tidak ada
     final List<String> descriptionPoints =
         (widget.product['description_points'] as List<dynamic>?)
-                ?.map((item) => item.toString())
-                .toList() ??
-            [];
+            ?.map((item) => item.toString())
+            .toList() ??
+        [];
 
     return Scaffold(
       appBar: AppBar(
@@ -47,9 +48,10 @@ class _userdetailprodukscreenState extends State<userdetailprodukscreen> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: CircleAvatar(
-              backgroundImage: Image.network(
-                'https://via.placeholder.com/150', // Replace with actual user image
-              ).image,
+              backgroundImage:
+                  Image.network(
+                    'https://via.placeholder.com/150', // Replace with actual user image
+                  ).image,
             ),
           ),
         ],
@@ -59,14 +61,18 @@ class _userdetailprodukscreenState extends State<userdetailprodukscreen> {
           // Background Section (for the product image)
           Positioned.fill(
             child: Container(
-              color: Colors.white, // Or a light background color for the image area
+              color:
+                  Colors
+                      .white, // Or a light background color for the image area
               child: Align(
                 alignment: Alignment.topCenter,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 20.0),
                   child: Image.network(
                     widget.product['image']!,
-                    height: MediaQuery.of(context).size.height * 0.35, // Adjust height as needed
+                    height:
+                        MediaQuery.of(context).size.height *
+                        0.35, // Adjust height as needed
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -77,7 +83,9 @@ class _userdetailprodukscreenState extends State<userdetailprodukscreen> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.6, // Adjust height as needed
+              height:
+                  MediaQuery.of(context).size.height *
+                  0.6, // Adjust height as needed
               padding: const EdgeInsets.all(20.0),
               decoration: const BoxDecoration(
                 color: Color(0xFF282828), // Dark grey background
@@ -112,11 +120,31 @@ class _userdetailprodukscreenState extends State<userdetailprodukscreen> {
                             const SizedBox(height: 5),
                             Row(
                               children: [
-                                const Icon(Icons.star, color: Colors.amber, size: 18),
-                                const Icon(Icons.star, color: Colors.amber, size: 18),
-                                const Icon(Icons.star, color: Colors.amber, size: 18),
-                                const Icon(Icons.star, color: Colors.amber, size: 18),
-                                Icon(Icons.star_half, color: Colors.amber, size: 18),
+                                const Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                  size: 18,
+                                ),
+                                const Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                  size: 18,
+                                ),
+                                const Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                  size: 18,
+                                ),
+                                const Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                  size: 18,
+                                ),
+                                Icon(
+                                  Icons.star_half,
+                                  color: Colors.amber,
+                                  size: 18,
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   '(100 Reviews)',
@@ -145,11 +173,16 @@ class _userdetailprodukscreenState extends State<userdetailprodukscreen> {
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.grey[700], // Darker grey for icon background
+                            color:
+                                Colors
+                                    .grey[700], // Darker grey for icon background
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: IconButton(
-                            icon: const Icon(Icons.shopping_bag_outlined, color: Colors.white),
+                            icon: const Icon(
+                              Icons.shopping_bag_outlined,
+                              color: Colors.white,
+                            ),
                             onPressed: () {
                               // Handle add to cart
                             },
@@ -158,11 +191,16 @@ class _userdetailprodukscreenState extends State<userdetailprodukscreen> {
                         const SizedBox(width: 10),
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.grey[700], // Darker grey for icon background
+                            color:
+                                Colors
+                                    .grey[700], // Darker grey for icon background
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: IconButton(
-                            icon: const Icon(Icons.play_arrow, color: Colors.white),
+                            icon: const Icon(
+                              Icons.play_arrow,
+                              color: Colors.white,
+                            ),
                             onPressed: () {
                               // Handle play action
                             },
@@ -175,7 +213,9 @@ class _userdetailprodukscreenState extends State<userdetailprodukscreen> {
                               // Handle purchase
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF4CAF50), // Green for purchase button
+                              backgroundColor: const Color(
+                                0xFF4CAF50,
+                              ), // Green for purchase button
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -183,7 +223,10 @@ class _userdetailprodukscreenState extends State<userdetailprodukscreen> {
                             ),
                             child: const Text(
                               'Purchase',
-                              style: TextStyle(fontSize: 18, color: Colors.white),
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -203,18 +246,19 @@ class _userdetailprodukscreenState extends State<userdetailprodukscreen> {
                     if (descriptionPoints.isNotEmpty)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: descriptionPoints.map((point) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 4.0),
-                            child: Text(
-                              '- $point', // Tambahkan bullet point
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
-                                fontSize: 14,
-                              ),
-                            ),
-                          );
-                        }).toList(),
+                        children:
+                            descriptionPoints.map((point) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 4.0),
+                                child: Text(
+                                  '- $point', // Tambahkan bullet point
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.8),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
                       )
                     else
                       Text(
@@ -233,7 +277,9 @@ class _userdetailprodukscreenState extends State<userdetailprodukscreen> {
                     // Untuk kesederhanaan, saya membiarkan bagian ini statis atau Anda bisa
                     // menambahkan properti 'details_products' ke map produk Anda.
                     Theme(
-                      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                      data: Theme.of(
+                        context,
+                      ).copyWith(dividerColor: Colors.transparent),
                       child: ExpansionTile(
                         title: const Text(
                           'Details Products',
@@ -244,7 +290,9 @@ class _userdetailprodukscreenState extends State<userdetailprodukscreen> {
                           ),
                         ),
                         trailing: Icon(
-                          _isDescriptionExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                          _isDescriptionExpanded
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
                           color: Colors.white,
                         ),
                         onExpansionChanged: (bool expanded) {
@@ -254,18 +302,25 @@ class _userdetailprodukscreenState extends State<userdetailprodukscreen> {
                         },
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                              vertical: 8.0,
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 // Contoh: Anda bisa menambahkan detail lain dari produk di sini jika ada field terpisah
                                 Text(
                                   'Specific details for ${widget.product['name']}',
-                                  style: TextStyle(color: Colors.white.withOpacity(0.7)),
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.7),
+                                  ),
                                 ),
                                 Text(
                                   'More information about this product.',
-                                  style: TextStyle(color: Colors.white.withOpacity(0.7)),
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.7),
+                                  ),
                                 ),
                                 // ... Anda bisa menambahkan lebih banyak detail di sini
                               ],

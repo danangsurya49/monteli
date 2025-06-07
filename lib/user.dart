@@ -446,7 +446,7 @@ class _userscreenState extends State<userscreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => userdetailprodukscreen(product: product),
+            builder: (context) => user_detail_produkscreen(product: product),
           ),
         );
       },
