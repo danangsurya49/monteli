@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:montelimart/user_detail_produk.dart';
 
-class detailprodukscreen extends StatefulWidget {
-  const detailprodukscreen({super.key});
+class userscreen extends StatefulWidget {
+  const userscreen({super.key});
 
   @override
-  State<detailprodukscreen> createState() => _detailprodukscreenState();
+  State<userscreen> createState() => _userscreenState();
 }
 
-class _detailprodukscreenState extends State<detailprodukscreen> {
+class _userscreenState extends State<userscreen> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -69,9 +69,10 @@ class _detailprodukscreenState extends State<detailprodukscreen> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: CircleAvatar(
-              backgroundImage: Image.network(
-                'https://via.placeholder.com/150', // Replace with actual user image
-              ).image,
+              backgroundImage:
+                  Image.network(
+                    'https://via.placeholder.com/150', // Replace with actual user image
+                  ).image,
             ),
           ),
         ],
@@ -120,9 +121,10 @@ class _detailprodukscreenState extends State<detailprodukscreen> {
             children: [
               CircleAvatar(
                 radius: 30,
-                backgroundImage: Image.network(
-                  'https://via.placeholder.com/150', // Replace with actual user profile image
-                ).image,
+                backgroundImage:
+                    Image.network(
+                      'https://via.placeholder.com/150', // Replace with actual user profile image
+                    ).image,
               ),
               const SizedBox(width: 15),
               Column(
@@ -325,11 +327,21 @@ class _detailprodukscreenState extends State<detailprodukscreen> {
   Widget _buildProductsGrid() {
     final List<Map<String, dynamic>> products = [
       {
-        'name': 'Yakult', // Changed to just "Yakult" for primary title
-        'sub_title': 'Minuman Susu Fermentasi S⁺ 65 ml', // Added sub-title
+        'name': 'Yakult',
+        'sub_title': 'Minuman Susu Fermentasi S⁺ 65 ml',
         'price': 'Rp 10.500',
         'image':
             'https://d1sag4ddilekd9.cloudfront.net/compressed_uos/ID/dishes/1327179013098553251/c9f28d6c7ff34b4c803328ce37267f81_1668060851886121437.jpg',
+        'description_points': [
+          // <-- Tambahkan deskripsi di sini sebagai list string
+          'Contains good bacteria L. casei Shirota',
+          'Helps maintain good digestion',
+          'Does not contain fat and cholesterol',
+          'Without added preservatives or artificial colors',
+          'Volume: 65 ml per bottle',
+          'Packaging: 5 bottles per pack',
+          'Producer: Yakult Indonesia Persada',
+        ],
       },
       {
         'name': 'Ultra Milk',
@@ -337,6 +349,15 @@ class _detailprodukscreenState extends State<detailprodukscreen> {
         'price': 'Rp 7.900',
         'image':
             'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/ultra-milk_ultra-milk-uht-full-cream-minuman-susu--250-ml-_full04.jpg',
+        'description_points': [
+          // <-- Deskripsi berbeda
+          'Full cream UHT milk',
+          'High in calcium and vitamins',
+          'Suitable for daily consumption',
+          'Shelf-stable and convenient',
+          'Volume: 250 ml',
+          'Producer: Ultrajaya Milk Industry',
+        ],
       },
       {
         'name': 'Marjan Boudouin Syrup',
@@ -344,6 +365,14 @@ class _detailprodukscreenState extends State<detailprodukscreen> {
         'price': 'Rp 26.900',
         'image':
             'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/marjan_marjan-boudoin-syrup-melon-460ml_full02.jpg',
+        'description_points': [
+          // <-- Deskripsi berbeda
+          'Melon flavored syrup',
+          'Refreshing and sweet',
+          'Great for drinks and desserts',
+          'Volume: 460 ml',
+          'Producer: PT. Lasallefood Indonesia',
+        ],
       },
       {
         'name': 'Teh Pucuk Harum',
@@ -351,6 +380,14 @@ class _detailprodukscreenState extends State<detailprodukscreen> {
         'price': 'Rp 3.200',
         'image':
             'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/teh-pucuk-harum_teh-pucuk-harum-minuman-teh--250-ml--kemasan-cup-_full02.jpg',
+        'description_points': [
+          // <-- Deskripsi berbeda
+          'Jasmine tea ready to drink',
+          'Authentic tea flavor',
+          'No artificial sweeteners',
+          'Volume: 250 ml',
+          'Producer: PT. Mayora Indah Tbk',
+        ],
       },
       {
         'name': 'Aqua',
@@ -358,6 +395,14 @@ class _detailprodukscreenState extends State<detailprodukscreen> {
         'price': 'Rp 6.900',
         'image':
             'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/aqua_aqua-air-mineral-kemasan-botol-600-ml-_full02.jpg',
+        'description_points': [
+          // <-- Deskripsi berbeda
+          'Pure mineral water',
+          'Hydrating and refreshing',
+          'Sourced from natural springs',
+          'Volume: 600 ml',
+          'Producer: Danone AQUA',
+        ],
       },
       {
         'name': 'Good Day Kopi',
@@ -365,6 +410,14 @@ class _detailprodukscreenState extends State<detailprodukscreen> {
         'price': 'Rp 7.900',
         'image':
             'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/good-day_good-day-kopi-dingin-kopi-originale-cappuccino--250-ml--kemasan-cup-_full02.jpg',
+        'description_points': [
+          // <-- Deskripsi berbeda
+          'Ready-to-drink cappuccino coffee',
+          'Rich and creamy taste',
+          'Perfect for on-the-go',
+          'Volume: 250 ml',
+          'Producer: PT. Santos Jaya Abadi',
+        ],
       },
     ];
 
@@ -388,12 +441,12 @@ class _detailprodukscreenState extends State<detailprodukscreen> {
   }
 
   Widget _buildProductCard(Map<String, dynamic> product) {
-    return GestureDetector( // <--- Tambahkan GestureDetector di sini
+    return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DetailProductScreen(product: product), // <--- Navigasi ke DetailProductScreen
+            builder: (context) => userdetailprodukscreen(product: product),
           ),
         );
       },
@@ -407,8 +460,9 @@ class _detailprodukscreenState extends State<detailprodukscreen> {
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(10)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(10),
+                ),
                 child: Image.network(
                   product['image']!,
                   fit: BoxFit.cover,
@@ -455,7 +509,6 @@ class _detailprodukscreenState extends State<detailprodukscreen> {
                         ),
                         onPressed: () {
                           // Handle add to cart
-                          // This button now only adds to cart, not navigate
                         },
                       ),
                     ),

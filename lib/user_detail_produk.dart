@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 
-class DetailProductScreen extends StatefulWidget {
-  final Map<String, dynamic> product;
+class userdetailprodukscreen extends StatefulWidget {
+  final Map<String, dynamic> product; // Untuk menerima data produk
 
-  const DetailProductScreen({super.key, required this.product});
+  const userdetailprodukscreen({super.key, required this.product});
 
   @override
-  State<DetailProductScreen> createState() => _DetailProductScreenState();
+  State<userdetailprodukscreen> createState() => _userdetailprodukscreenState();
 }
 
-class _DetailProductScreenState extends State<DetailProductScreen> {
+class _userdetailprodukscreenState extends State<userdetailprodukscreen> {
   bool _isDescriptionExpanded = false;
 
   @override
   Widget build(BuildContext context) {
+    // Ambil list deskripsi atau kosongkan jika tidak ada
+    final List<String> descriptionPoints =
+        (widget.product['description_points'] as List<dynamic>?)
+                ?.map((item) => item.toString())
+                .toList() ??
+            [];
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -95,7 +102,8 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                               ),
                             ),
                             Text(
-                              widget.product['sub_title'] ?? 'Minuman Susu Fermentasi', // Default if not provided
+                              widget.product['sub_title'] ??
+                                  'Minuman Susu Fermentasi', // Default if not provided
                               style: TextStyle(
                                 color: Colors.white.withOpacity(0.7),
                                 fontSize: 16,
@@ -191,18 +199,39 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Text(
-                      '- Contains good bacteria L. casei Shirota\n'
-                      '- Helps maintain good digestion\n'
-                      '- Does not contain fat and cholesterol\n'
-                      '- Without added preservatives or artificial colors',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
-                        fontSize: 14,
+                    // Menampilkan deskripsi berdasarkan data produk
+                    if (descriptionPoints.isNotEmpty)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: descriptionPoints.map((point) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 4.0),
+                            child: Text(
+                              '- $point', // Tambahkan bullet point
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.8),
+                                fontSize: 14,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      )
+                    else
+                      Text(
+                        'No description available for this product.',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 14,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
-                    ),
                     const SizedBox(height: 20),
                     Divider(color: Colors.white.withOpacity(0.3)),
+                    // Bagian "Details Products" yang bisa diperluas
+                    // Anda bisa memindahkan detail seperti volume, packaging, producer
+                    // ke dalam description_points atau memiliki field terpisah jika lebih kompleks.
+                    // Untuk kesederhanaan, saya membiarkan bagian ini statis atau Anda bisa
+                    // menambahkan properti 'details_products' ke map produk Anda.
                     Theme(
                       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                       child: ExpansionTile(
@@ -229,19 +258,16 @@ class _DetailProductScreenState extends State<DetailProductScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                // Contoh: Anda bisa menambahkan detail lain dari produk di sini jika ada field terpisah
                                 Text(
-                                  'Volume: 65 ml per bottle',
+                                  'Specific details for ${widget.product['name']}',
                                   style: TextStyle(color: Colors.white.withOpacity(0.7)),
                                 ),
                                 Text(
-                                  'Packaging: 5 bottles per pack (or 10 bottles per pack based on image)',
+                                  'More information about this product.',
                                   style: TextStyle(color: Colors.white.withOpacity(0.7)),
                                 ),
-                                Text(
-                                  'Producer: Yakult Indonesia Persada',
-                                  style: TextStyle(color: Colors.white.withOpacity(0.7)),
-                                ),
-                                // Add more product details here
+                                // ... Anda bisa menambahkan lebih banyak detail di sini
                               ],
                             ),
                           ),
