@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:montelimart/user_detail_produk.dart'; // <--- Tambahkan ini
+import 'package:montelimart/user_detail_produk.dart';
 
 class detailprodukscreen extends StatefulWidget {
   const detailprodukscreen({super.key});
