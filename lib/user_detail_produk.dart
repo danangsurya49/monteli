@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DetailProductScreen extends StatefulWidget {
-  final Map<String, dynamic> product; // Untuk menerima data produk
+  final Map<String, dynamic> product;
 
   const DetailProductScreen({super.key, required this.product});
 
