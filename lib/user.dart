@@ -1,36 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:montelimart/user_detail_produk.dart'; // <--- Tambahkan ini
 
-void main() {
-  runApp(const userscreen());
-}
-
-class userscreen extends StatefulWidget {
-  const userscreen({super.key});
+class detailprodukscreen extends StatefulWidget {
+  const detailprodukscreen({super.key});
 
   @override
-  State<userscreen> createState() => _userscreenState();
+  State<detailprodukscreen> createState() => _detailprodukscreenState();
 }
 
-class _userscreenState extends State<userscreen> {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'MontelliMart',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const MontelliMartHomeScreen(),
-    );
-  }
-}
-
-class MontelliMartHomeScreen extends StatefulWidget {
-  const MontelliMartHomeScreen({super.key});
-
-  @override
-  State<MontelliMartHomeScreen> createState() => _MontelliMartHomeScreenState();
-}
-
-class _MontelliMartHomeScreenState extends State<MontelliMartHomeScreen> {
+class _detailprodukscreenState extends State<detailprodukscreen> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -91,10 +69,9 @@ class _MontelliMartHomeScreenState extends State<MontelliMartHomeScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: CircleAvatar(
-              backgroundImage:
-                  Image.network(
-                    'https://via.placeholder.com/150', // Replace with actual user image
-                  ).image,
+              backgroundImage: Image.network(
+                'https://via.placeholder.com/150', // Replace with actual user image
+              ).image,
             ),
           ),
         ],
@@ -143,10 +120,9 @@ class _MontelliMartHomeScreenState extends State<MontelliMartHomeScreen> {
             children: [
               CircleAvatar(
                 radius: 30,
-                backgroundImage:
-                    Image.network(
-                      'https://via.placeholder.com/150', // Replace with actual user profile image
-                    ).image,
+                backgroundImage: Image.network(
+                  'https://via.placeholder.com/150', // Replace with actual user profile image
+                ).image,
               ),
               const SizedBox(width: 15),
               Column(
@@ -221,16 +197,16 @@ class _MontelliMartHomeScreenState extends State<MontelliMartHomeScreen> {
                         color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Column(
+                      child: const Column(
                         children: [
-                          const Text(
+                          Text(
                             'Number of orders',
                             style: TextStyle(
                               color: Colors.white70,
                               fontSize: 10,
                             ),
                           ),
-                          const Text(
+                          Text(
                             '0',
                             style: TextStyle(
                               color: Colors.white,
@@ -251,16 +227,16 @@ class _MontelliMartHomeScreenState extends State<MontelliMartHomeScreen> {
                         color: const Color(0xFFF18E34), // Orange color
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Column(
+                      child: const Column(
                         children: [
-                          const Text(
+                          Text(
                             'Total spent',
                             style: TextStyle(
                               color: Colors.white70,
                               fontSize: 10,
                             ),
                           ),
-                          const Text(
+                          Text(
                             'RP 0.0',
                             style: TextStyle(
                               color: Colors.white,
@@ -349,37 +325,43 @@ class _MontelliMartHomeScreenState extends State<MontelliMartHomeScreen> {
   Widget _buildProductsGrid() {
     final List<Map<String, dynamic>> products = [
       {
-        'name': 'Yakult Minuman Susu Fermentasi',
+        'name': 'Yakult', // Changed to just "Yakult" for primary title
+        'sub_title': 'Minuman Susu Fermentasi S⁺ 65 ml', // Added sub-title
         'price': 'Rp 10.500',
         'image':
             'https://d1sag4ddilekd9.cloudfront.net/compressed_uos/ID/dishes/1327179013098553251/c9f28d6c7ff34b4c803328ce37267f81_1668060851886121437.jpg',
       },
       {
-        'name': 'Ultra Milk Susu UHT Full Cream',
+        'name': 'Ultra Milk',
+        'sub_title': 'Susu UHT Full Cream',
         'price': 'Rp 7.900',
         'image':
             'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/ultra-milk_ultra-milk-uht-full-cream-minuman-susu--250-ml-_full04.jpg',
       },
       {
-        'name': 'Marjan Boudouin Syrup Melon',
+        'name': 'Marjan Boudouin Syrup',
+        'sub_title': 'Melon',
         'price': 'Rp 26.900',
         'image':
             'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/marjan_marjan-boudoin-syrup-melon-460ml_full02.jpg',
       },
       {
-        'name': 'Teh Pucuk Harum Melati',
+        'name': 'Teh Pucuk Harum',
+        'sub_title': 'Melati',
         'price': 'Rp 3.200',
         'image':
             'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/teh-pucuk-harum_teh-pucuk-harum-minuman-teh--250-ml--kemasan-cup-_full02.jpg',
       },
       {
-        'name': 'Aqua Air Mineral',
+        'name': 'Aqua',
+        'sub_title': 'Air Mineral',
         'price': 'Rp 6.900',
         'image':
             'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/aqua_aqua-air-mineral-kemasan-botol-600-ml-_full02.jpg',
       },
       {
-        'name': 'Good Day Kopi Originale Cappuccino',
+        'name': 'Good Day Kopi',
+        'sub_title': 'Originale Cappuccino',
         'price': 'Rp 7.900',
         'image':
             'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/good-day_good-day-kopi-dingin-kopi-originale-cappuccino--250-ml--kemasan-cup-_full02.jpg',
@@ -406,73 +388,83 @@ class _MontelliMartHomeScreenState extends State<MontelliMartHomeScreen> {
   }
 
   Widget _buildProductCard(Map<String, dynamic> product) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(10),
-              ),
-              child: Image.network(
-                product['image']!,
-                fit: BoxFit.cover,
-                width: double.infinity,
+    return GestureDetector( // <--- Tambahkan GestureDetector di sini
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailProductScreen(product: product), // <--- Navigasi ke DetailProductScreen
+          ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(10)),
+                child: Image.network(
+                  product['image']!,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product['name']!,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  product['price']!,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(8),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product['name']!,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
                     ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.shopping_bag_outlined,
-                        color: Colors.white,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    product['price']!,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      onPressed: () {
-                        // Handle add to cart
-                      },
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.shopping_bag_outlined,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          // Handle add to cart
+                          // This button now only adds to cart, not navigate
+                        },
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
