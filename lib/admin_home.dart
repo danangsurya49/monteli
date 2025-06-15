@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AdminHome extends StatefulWidget {
-  const AdminHome({super.key});
+  AdminHome({super.key});
 
   @override
   State<AdminHome> createState() => _AdminHomeState();
@@ -15,18 +15,27 @@ class _AdminHomeState extends State<AdminHome> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(8.0),
           child: CircleAvatar(
             backgroundImage: AssetImage('assets/Montelli_Family_Logo.png'),
           ),
         ),
+        centerTitle: true,
+        title: Text(
+          'MontelliMart',
+          style: TextStyle(
+            color: Colors.blueGrey,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.search, color: Colors.black),
+            icon: Icon(Icons.search, color: Colors.black),
             onPressed: () {},
           ),
           Padding(
-            padding: const EdgeInsets.only(right: 16.0),
+            padding: EdgeInsets.only(right: 16.0),
             child: CircleAvatar(
               child: Icon(Icons.person, color: Colors.blueGrey),
             ),
@@ -35,13 +44,13 @@ class _AdminHomeState extends State<AdminHome> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Card Profile Admin
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.blueGrey,
                   borderRadius: BorderRadius.circular(12),
@@ -57,7 +66,7 @@ class _AdminHomeState extends State<AdminHome> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('MontelliMart', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text('Nama Admin', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
                         Text('NIP', style: TextStyle(color: Colors.white)),
                         Text('E-mail', style: TextStyle(color: Colors.white)),
                       ],
@@ -68,7 +77,7 @@ class _AdminHomeState extends State<AdminHome> {
               SizedBox(height: 16),
               // Total Sales This Month
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.teal,
                   borderRadius: BorderRadius.circular(12),
@@ -78,7 +87,7 @@ class _AdminHomeState extends State<AdminHome> {
                     Text('Total Sales this Month', style: TextStyle(color: Colors.white)),
                     SizedBox(height: 8),
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(8),
@@ -93,7 +102,7 @@ class _AdminHomeState extends State<AdminHome> {
               SizedBox(height: 16),
               // Total Sales Today
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.orangeAccent,
                   borderRadius: BorderRadius.circular(12),
@@ -103,7 +112,7 @@ class _AdminHomeState extends State<AdminHome> {
                     Text('Total Sales Today', style: TextStyle(color: Colors.white)),
                     SizedBox(height: 8),
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(8),
@@ -125,7 +134,7 @@ class _AdminHomeState extends State<AdminHome> {
                         backgroundColor: Colors.blueGrey,
                       ),
                       onPressed: () {},
-                      child: Text('Cashier',
+                      child: Text('Sales',
                         style: TextStyle(color: Colors.white)),
                     ),
                   ),
@@ -164,14 +173,14 @@ class _AdminHomeState extends State<AdminHome> {
         onTap: (index) {
           // Tambahkan logika navigasi di sini
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Accueil',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.point_of_sale),
-            label: 'Chasier',
+            icon: Icon(Icons.trending_up),
+            label: 'Sales',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_bag),
