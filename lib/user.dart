@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:montelimart/user_detail_produk.dart';
+import 'package:montelimart/user_detail_produk.dart'; // Make sure this path is correct
+import 'package:montelimart/user_kategori.dart'; // Make sure this path is correct
 
 class userscreen extends StatefulWidget {
   const userscreen({super.key});
@@ -9,7 +10,7 @@ class userscreen extends StatefulWidget {
 }
 
 class _userscreenState extends State<userscreen> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 0; // Mengelola indeks tab yang sedang aktif
 
   void _onItemTapped(int index) {
     setState(() {
@@ -17,8 +18,34 @@ class _userscreenState extends State<userscreen> {
     });
   }
 
+  // Define _pages here as a lazy-initialized list or within the build method
+  // if it depends on context which is not available at initialization time for the State class.
+  // For simplicity and correctness with context, we'll build the pages dynamically.
+
   @override
   Widget build(BuildContext context) {
+    // List widget untuk setiap tab di BottomNavigationBar
+    // Pindahkan _pages ke dalam method build agar dapat mengakses instance methods
+    // dan context yang diperlukan oleh _buildHeaderCard, dll.
+    final List<Widget> _pages = [
+      // Halaman Home (konten user screen saat ini)
+      SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeaderCard(), // Panggil method instance ini
+            const SizedBox(height: 20),
+            _buildProductCategories(), // Panggil method instance ini
+            const SizedBox(height: 20),
+            _buildProductsGrid(), // Panggil method instance ini
+          ],
+        ),
+      ),
+      const CategoryScreen(), // Halaman Kategori
+      const Center(child: Text('Payment Screen', style: TextStyle(fontSize: 24))), // Placeholder untuk Payment
+      const Center(child: Text('Profile Screen', style: TextStyle(fontSize: 24))), // Placeholder untuk Profile
+    ];
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -69,26 +96,14 @@ class _userscreenState extends State<userscreen> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: CircleAvatar(
-              backgroundImage:
-                  Image.network(
-                    'https://via.placeholder.com/150', // Replace with actual user image
-                  ).image,
+              backgroundImage: Image.network(
+                'https://via.placeholder.com/150', // Replace with actual user image
+              ).image,
             ),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeaderCard(),
-            const SizedBox(height: 20),
-            _buildProductCategories(),
-            const SizedBox(height: 20),
-            _buildProductsGrid(),
-          ],
-        ),
-      ),
+      body: _pages[_selectedIndex], // Menampilkan halaman yang dipilih
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
@@ -107,6 +122,7 @@ class _userscreenState extends State<userscreen> {
     );
   }
 
+  // Hapus keyword 'static' dari semua method ini
   Widget _buildHeaderCard() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -121,10 +137,9 @@ class _userscreenState extends State<userscreen> {
             children: [
               CircleAvatar(
                 radius: 30,
-                backgroundImage:
-                    Image.network(
-                      'https://via.placeholder.com/150', // Replace with actual user profile image
-                    ).image,
+                backgroundImage: Image.network(
+                  'https://via.placeholder.com/150', // Replace with actual user profile image
+                ).image,
               ),
               const SizedBox(width: 15),
               Column(
@@ -333,7 +348,6 @@ class _userscreenState extends State<userscreen> {
         'image':
             'https://d1sag4ddilekd9.cloudfront.net/compressed_uos/ID/dishes/1327179013098553251/c9f28d6c7ff34b4c803328ce37267f81_1668060851886121437.jpg',
         'description_points': [
-          // <-- Tambahkan deskripsi di sini sebagai list string
           'Contains good bacteria L. casei Shirota',
           'Helps maintain good digestion',
           'Does not contain fat and cholesterol',
@@ -350,7 +364,6 @@ class _userscreenState extends State<userscreen> {
         'image':
             'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/ultra-milk_ultra-milk-uht-full-cream-minuman-susu--250-ml-_full04.jpg',
         'description_points': [
-          // <-- Deskripsi berbeda
           'Full cream UHT milk',
           'High in calcium and vitamins',
           'Suitable for daily consumption',
@@ -366,7 +379,6 @@ class _userscreenState extends State<userscreen> {
         'image':
             'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/marjan_marjan-boudoin-syrup-melon-460ml_full02.jpg',
         'description_points': [
-          // <-- Deskripsi berbeda
           'Melon flavored syrup',
           'Refreshing and sweet',
           'Great for drinks and desserts',
@@ -381,7 +393,6 @@ class _userscreenState extends State<userscreen> {
         'image':
             'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/teh-pucuk-harum_teh-pucuk-harum-minuman-teh--250-ml--kemasan-cup-_full02.jpg',
         'description_points': [
-          // <-- Deskripsi berbeda
           'Jasmine tea ready to drink',
           'Authentic tea flavor',
           'No artificial sweeteners',
@@ -396,7 +407,6 @@ class _userscreenState extends State<userscreen> {
         'image':
             'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/aqua_aqua-air-mineral-kemasan-botol-600-ml-_full02.jpg',
         'description_points': [
-          // <-- Deskripsi berbeda
           'Pure mineral water',
           'Hydrating and refreshing',
           'Sourced from natural springs',
@@ -411,7 +421,6 @@ class _userscreenState extends State<userscreen> {
         'image':
             'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/good-day_good-day-kopi-dingin-kopi-originale-cappuccino--250-ml--kemasan-cup-_full02.jpg',
         'description_points': [
-          // <-- Deskripsi berbeda
           'Ready-to-drink cappuccino coffee',
           'Rich and creamy taste',
           'Perfect for on-the-go',
@@ -440,9 +449,12 @@ class _userscreenState extends State<userscreen> {
     );
   }
 
+  // Hapus keyword 'static' dari method ini
   Widget _buildProductCard(Map<String, dynamic> product) {
     return GestureDetector(
       onTap: () {
+        // Karena _buildProductCard sekarang adalah instance method,
+        // ia memiliki akses ke 'context' dari _userscreenState
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -460,9 +472,8 @@ class _userscreenState extends State<userscreen> {
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(10),
-                ),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(10)),
                 child: Image.network(
                   product['image']!,
                   fit: BoxFit.cover,
