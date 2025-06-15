@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:montelimart/admin_sales.dart';
+import 'package:montelimart/admin_stock1.dart';
+import 'package:montelimart/admin_profil1.dart';
 
 class AdminHome extends StatefulWidget {
   AdminHome({super.key});
@@ -133,7 +136,12 @@ class _AdminHomeState extends State<AdminHome> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blueGrey,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AdminSales()),
+                        );
+                      },
                       child: Text('Sales',
                         style: TextStyle(color: Colors.white)),
                     ),
@@ -144,7 +152,12 @@ class _AdminHomeState extends State<AdminHome> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blueGrey,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AdminStock1()),
+                        );
+                      },
                       child: Text('Stock',
                         style: TextStyle(color: Colors.white)),
                     ),
@@ -169,14 +182,39 @@ class _AdminHomeState extends State<AdminHome> {
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.teal,
         unselectedItemColor: Colors.blueGrey,
-        currentIndex: 0, // Ganti sesuai halaman aktif
+        currentIndex: 2, // Halaman Stock
         onTap: (index) {
-          // Tambahkan logika navigasi di sini
+          switch (index) {
+            case 0:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => AdminHome()),
+              );
+              break;
+            case 1:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => AdminSales()),
+              );
+              break;
+            case 2:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => AdminStock1()),
+              );
+              break;
+            case 3:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => AdminProfil1()),
+              );
+              break;
+          }
         },
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Accueil',
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.trending_up),
