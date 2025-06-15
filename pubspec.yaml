@@ -59,6 +59,8 @@ flutter:
 
   assets:
    - assets/Montelli_Family_Logo.png
+   - assets/jellyfish_on_the_staircase.png
+   - assets/Interastral_Big_Lotto.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

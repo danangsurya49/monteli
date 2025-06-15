@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:montelimart/admin_home.dart';
 import 'package:montelimart/admin_sales.dart';
 import 'package:montelimart/admin_profil1.dart';
+import 'package:montelimart/admin_stock2.dart';
 
 class AdminStock1 extends StatefulWidget {
   const AdminStock1({super.key});
@@ -95,7 +96,14 @@ class _AdminStockState extends State<AdminStock1> {
                     ),
                     IconButton(
                       icon: Icon(Icons.arrow_forward, color: Colors.teal),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AdminStock2(),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
