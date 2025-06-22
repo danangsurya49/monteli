@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:montelimart/admin_sales.dart';
 import 'package:montelimart/admin_stock1.dart';
-import 'package:montelimart/admin_profil1.dart';
 
 class AdminHome extends StatefulWidget {
   AdminHome({super.key});
@@ -58,27 +57,42 @@ class _AdminHomeState extends State<AdminHome> {
                   color: Colors.blueGrey,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Row(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    // Ganti profil dengan logo
                     CircleAvatar(
                       radius: 32,
                       backgroundColor: Colors.white,
-                      child: Icon(Icons.person, size: 32, color: Colors.blueGrey),
+                      backgroundImage: AssetImage('assets/Montelli_Family_Logo.png'),
                     ),
-                    SizedBox(width: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Nama Admin', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                        Text('NIP', style: TextStyle(color: Colors.white)),
-                        Text('E-mail', style: TextStyle(color: Colors.white)),
-                      ],
+                    SizedBox(height: 16),
+                    Text(
+                      'Montelli Admin',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+                      style: TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'E-mail',
+                      style: TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
               ),
               SizedBox(height: 16),
-              // Total Sales This Month
               Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -87,7 +101,7 @@ class _AdminHomeState extends State<AdminHome> {
                 ),
                 child: Column(
                   children: [
-                    Text('Total Sales this Month', style: TextStyle(color: Colors.white)),
+                    Text('Total Sales', style: TextStyle(color: Colors.white)), // Sudah diubah
                     SizedBox(height: 8),
                     Container(
                       padding: EdgeInsets.all(16),
@@ -103,32 +117,6 @@ class _AdminHomeState extends State<AdminHome> {
                 ),
               ),
               SizedBox(height: 16),
-              // Total Sales Today
-              Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.orangeAccent,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  children: [
-                    Text('Total Sales Today', style: TextStyle(color: Colors.white)),
-                    SizedBox(height: 8),
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Center(
-                        child: Text('IDR0.0', style: TextStyle(color: Colors.red, fontSize: 24)),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 16),
-              // Tombol-tombol
               Row(
                 children: [
                   Expanded(
@@ -170,7 +158,7 @@ class _AdminHomeState extends State<AdminHome> {
                   backgroundColor: Colors.blueGrey,
                 ),
                 onPressed: () {},
-                child: Text('Admin Profile',
+                child: Text('Home',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -203,12 +191,6 @@ class _AdminHomeState extends State<AdminHome> {
                 MaterialPageRoute(builder: (context) => AdminStock1()),
               );
               break;
-            case 3:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => AdminProfil1()),
-              );
-              break;
           }
         },
         items: [
@@ -223,10 +205,6 @@ class _AdminHomeState extends State<AdminHome> {
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_bag),
             label: 'Stock',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profil',
           ),
         ],
       ),

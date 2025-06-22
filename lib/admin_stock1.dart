@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:montelimart/admin_home.dart';
 import 'package:montelimart/admin_sales.dart';
-import 'package:montelimart/admin_profil1.dart';
 import 'package:montelimart/admin_stock2.dart';
 
 class AdminStock1 extends StatefulWidget {
@@ -282,12 +281,6 @@ class _AdminStockState extends State<AdminStock1> {
                 MaterialPageRoute(builder: (context) => AdminStock1()),
               );
               break;
-            case 3:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => AdminProfil1()),
-              );
-              break;
           }
         },
         items: [
@@ -302,10 +295,6 @@ class _AdminStockState extends State<AdminStock1> {
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_bag),
             label: 'Stock',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profil',
           ),
         ],
       ),

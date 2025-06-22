@@ -42,65 +42,90 @@ class _AdminStock2State extends State<AdminStock2> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 8),
-            Text(
-              'Beverages',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-                color: Colors.blueGrey,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 8),
+                Text(
+                  'Beverages',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 22,
+                    color: Colors.blueGrey,
+                  ),
+                ),
+                SizedBox(height: 16),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              children: [
+                _buildBeverageItem(
+                  image: 'assets/minuman/yakult.png',
+                  name: 'Yakult Minuman Susu Fermentasi',
+                  stock: 24,
+                  price: 'Rp 10.500',
+                ),
+                _buildBeverageItem(
+                  image: 'assets/minuman/ultramilk.png',
+                  name: 'Ultra Milk Susu UHT Full Cream',
+                  stock: 24,
+                  price: 'Rp 7.900',
+                ),
+                _buildBeverageItem(
+                  image: 'assets/minuman/marjan.png',
+                  name: 'Marjan Boudoir Sirup Melon',
+                  stock: 24,
+                  price: 'Rp 26.900',
+                ),
+                _buildBeverageItem(
+                  image: 'assets/minuman/pucuk.png',
+                  name: 'Teh Pucuk Harum Melati',
+                  stock: 24,
+                  price: 'Rp 3.200',
+                ),
+                _buildBeverageItem(
+                  image: 'assets/minuman/aqua.png',
+                  name: 'Aqua Air Mineral',
+                  stock: 24,
+                  price: 'Rp 6.900',
+                ),
+                _buildBeverageItem(
+                  image: 'assets/minuman/gooday.png',
+                  name: 'Good Day Kopi Originale Cappuccino',
+                  stock: 24,
+                  price: 'Rp 7.900',
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueGrey[700],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'save changes',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
               ),
             ),
-            SizedBox(height: 16),
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildBeverageItem(
-                    image: 'assets/minuman/yakult.png',
-                    name: 'Yakult Minuman Susu Fermentasi',
-                    stock: 24,
-                    price: 'Rp 10.500',
-                  ),
-                  _buildBeverageItem(
-                    image: 'assets/minuman/ultramilk.png',
-                    name: 'Ultra Milk Susu UHT Full Cream',
-                    stock: 24,
-                    price: 'Rp 7.900',
-                  ),
-                  _buildBeverageItem(
-                    image: 'assets/minuman/marjan.png',
-                    name: 'Marjan Boudoir Sirup Melon',
-                    stock: 24,
-                    price: 'Rp 26.900',
-                  ),
-                  _buildBeverageItem(
-                    image: 'assets/minuman/pucuk.png',
-                    name: 'Teh Pucuk Harum Melati',
-                    stock: 24,
-                    price: 'Rp 3.200',
-                  ),
-                  _buildBeverageItem(
-                    image: 'assets/minuman/aqua.png',
-                    name: 'Aqua Air Mineral',
-                    stock: 24,
-                    price: 'Rp 6.900',
-                  ),
-                  _buildBeverageItem(
-                    image: 'assets/minuman/gooday.png',
-                    name: 'Good Day Kopi Originale Cappuccino',
-                    stock: 24,
-                    price: 'Rp 7.900',
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
