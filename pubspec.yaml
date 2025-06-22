@@ -59,18 +59,18 @@ flutter:
 
   assets:
     - assets/Montelli_Family_Logo.png
-    - assets/jellyfish_on_the_staircase.png
-    - assets/Interastral_Big_Lotto.png
-    - assets/Sparkling_Berry_Juice.jpg
-    - assets/burger.webp
-    - assets/march_7th.jpg
-    - assets/Fortune_Glue.webp
-    - assets/ultramilk.png
-    - assets/pucuk.png
-    - assets/yakult.png
-    - assets/aqua.png
-    - assets/gooday.png
-    - assets/marjan.png
+    - assets/kategori/jellyfish_on_the_staircase.png
+    - assets/kategori/Interastral_Big_Lotto.png
+    - assets/kategori/Sparkling_Berry_Juice.jpg
+    - assets/kategori/burger.webp
+    - assets/kategori/march_7th.jpg
+    - assets/kategori/Fortune_Glue.webp
+    - assets/minuman/ultramilk.png
+    - assets/minuman/pucuk.png
+    - assets/minuman/yakult.png
+    - assets/minuman/aqua.png
+    - assets/minuman/gooday.png
+    - assets/minuman/marjan.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

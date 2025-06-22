@@ -61,37 +61,37 @@ class _AdminStock2State extends State<AdminStock2> {
               child: ListView(
                 children: [
                   _buildBeverageItem(
-                    image: 'assets/yakult.png',
+                    image: 'assets/minuman/yakult.png',
                     name: 'Yakult Minuman Susu Fermentasi',
                     stock: 24,
                     price: 'Rp 10.500',
                   ),
                   _buildBeverageItem(
-                    image: 'assets/ultramilk.png',
+                    image: 'assets/minuman/ultramilk.png',
                     name: 'Ultra Milk Susu UHT Full Cream',
                     stock: 24,
                     price: 'Rp 7.900',
                   ),
                   _buildBeverageItem(
-                    image: 'assets/marjan.png',
+                    image: 'assets/minuman/marjan.png',
                     name: 'Marjan Boudoir Sirup Melon',
                     stock: 24,
                     price: 'Rp 26.900',
                   ),
                   _buildBeverageItem(
-                    image: 'assets/pucuk.png',
+                    image: 'assets/minuman/pucuk.png',
                     name: 'Teh Pucuk Harum Melati',
                     stock: 24,
                     price: 'Rp 3.200',
                   ),
                   _buildBeverageItem(
-                    image: 'assets/aqua.png',
+                    image: 'assets/minuman/aqua.png',
                     name: 'Aqua Air Mineral',
                     stock: 24,
                     price: 'Rp 6.900',
                   ),
                   _buildBeverageItem(
-                    image: 'assets/gooday.png',
+                    image: 'assets/minuman/gooday.png',
                     name: 'Good Day Kopi Originale Cappuccino',
                     stock: 24,
                     price: 'Rp 7.900',
