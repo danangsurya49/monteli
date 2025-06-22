@@ -60,41 +60,39 @@ class _AdminStock2State extends State<AdminStock2> {
             Expanded(
               child: ListView(
                 children: [
-                  // Item 1
-                  _buildBeverageItem(
-                    image: 'assets/ultra_milk.png',
-                    name: 'Ultra Milk Susu UHT Full Cream',
-                    stock: 24,
-                    price: 'Rp 7.900',
-                    onRemove: () {},
-                  ),
-                  _buildBeverageItem(
-                    image: 'assets/pucuk_harum.png',
-                    name: 'Teh Pucuk Harum',
-                    stock: 24,
-                    price: 'Rp 7.900',
-                  ),
                   _buildBeverageItem(
                     image: 'assets/yakult.png',
-                    name: 'Yakult',
+                    name: 'Yakult Minuman Susu Fermentasi',
                     stock: 24,
-                    price: 'Rp 7.900',
+                    price: 'Rp 10.500',
                   ),
                   _buildBeverageItem(
-                    image: 'assets/goodday.png',
-                    name: 'Goodday original Cappuchino',
+                    image: 'assets/ultramilk.png',
+                    name: 'Ultra Milk Susu UHT Full Cream',
                     stock: 24,
                     price: 'Rp 7.900',
                   ),
                   _buildBeverageItem(
                     image: 'assets/marjan.png',
-                    name: 'Sirup Marjan rasa Melon',
+                    name: 'Marjan Boudoir Sirup Melon',
                     stock: 24,
-                    price: 'Rp 7.900',
+                    price: 'Rp 26.900',
+                  ),
+                  _buildBeverageItem(
+                    image: 'assets/pucuk.png',
+                    name: 'Teh Pucuk Harum Melati',
+                    stock: 24,
+                    price: 'Rp 3.200',
                   ),
                   _buildBeverageItem(
                     image: 'assets/aqua.png',
                     name: 'Aqua Air Mineral',
+                    stock: 24,
+                    price: 'Rp 6.900',
+                  ),
+                  _buildBeverageItem(
+                    image: 'assets/gooday.png',
+                    name: 'Good Day Kopi Originale Cappuccino',
                     stock: 24,
                     price: 'Rp 7.900',
                   ),
