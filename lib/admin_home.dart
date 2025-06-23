@@ -85,7 +85,7 @@ class _AdminHomeState extends State<AdminHome> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'E-mail',
+                      'montelli123@gmail.com',
                       style: TextStyle(color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
