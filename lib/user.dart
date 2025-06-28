@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:montelimart/user_detail_produk.dart'; // Make sure this path is correct
-import 'package:montelimart/user_kategori.dart'; // Make sure this path is correct
+import 'package:montelimart/user_detail_produk.dart';
+import 'package:montelimart/user_kategori.dart';
 
 class userscreen extends StatefulWidget {
   const userscreen({super.key});
@@ -10,7 +10,7 @@ class userscreen extends StatefulWidget {
 }
 
 class _userscreenState extends State<userscreen> {
-  int _selectedIndex = 0; // Mengelola indeks tab yang sedang aktif
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -18,32 +18,28 @@ class _userscreenState extends State<userscreen> {
     });
   }
 
-  // Define _pages here as a lazy-initialized list or within the build method
-  // if it depends on context which is not available at initialization time for the State class.
-  // For simplicity and correctness with context, we'll build the pages dynamically.
-
   @override
   Widget build(BuildContext context) {
-    // List widget untuk setiap tab di BottomNavigationBar
-    // Pindahkan _pages ke dalam method build agar dapat mengakses instance methods
-    // dan context yang diperlukan oleh _buildHeaderCard, dll.
     final List<Widget> _pages = [
-      // Halaman Home (konten user screen saat ini)
       SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeaderCard(), // Panggil method instance ini
+            _buildHeaderCard(),
             const SizedBox(height: 20),
-            _buildProductCategories(), // Panggil method instance ini
+            _buildProductCategories(),
             const SizedBox(height: 20),
-            _buildProductsGrid(), // Panggil method instance ini
+            _buildProductsGrid(),
           ],
         ),
       ),
-      const CategoryScreen(), // Halaman Kategori
-      const Center(child: Text('Payment Screen', style: TextStyle(fontSize: 24))), // Placeholder untuk Payment
-      const Center(child: Text('Profile Screen', style: TextStyle(fontSize: 24))), // Placeholder untuk Profile
+      const kategoriscreen(), // Halaman Kategori
+      const Center(
+        child: Text('Payment Screen', style: TextStyle(fontSize: 24)),
+      ), // Placeholder untuk Payment
+      const Center(
+        child: Text('Profile Screen', style: TextStyle(fontSize: 24)),
+      ), // Placeholder untuk Profile
     ];
 
     return Scaffold(
@@ -96,9 +92,10 @@ class _userscreenState extends State<userscreen> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: CircleAvatar(
-              backgroundImage: Image.network(
-                'https://via.placeholder.com/150', // Replace with actual user image
-              ).image,
+              backgroundImage:
+                  Image.network(
+                    'https://via.placeholder.com/150', // Replace with actual user image
+                  ).image,
             ),
           ),
         ],
@@ -137,9 +134,10 @@ class _userscreenState extends State<userscreen> {
             children: [
               CircleAvatar(
                 radius: 30,
-                backgroundImage: Image.network(
-                  'https://via.placeholder.com/150', // Replace with actual user profile image
-                ).image,
+                backgroundImage:
+                    Image.network(
+                      'https://via.placeholder.com/150', // Replace with actual user profile image
+                    ).image,
               ),
               const SizedBox(width: 15),
               Column(
@@ -345,8 +343,7 @@ class _userscreenState extends State<userscreen> {
         'name': 'Yakult',
         'sub_title': 'Minuman Susu Fermentasi S⁺ 65 ml',
         'price': 'Rp 10.500',
-        'image':
-            'https://d1sag4ddilekd9.cloudfront.net/compressed_uos/ID/dishes/1327179013098553251/c9f28d6c7ff34b4c803328ce37267f81_1668060851886121437.jpg',
+        'image': 'assets/minuman/yakult.png',
         'description_points': [
           'Contains good bacteria L. casei Shirota',
           'Helps maintain good digestion',
@@ -361,8 +358,7 @@ class _userscreenState extends State<userscreen> {
         'name': 'Ultra Milk',
         'sub_title': 'Susu UHT Full Cream',
         'price': 'Rp 7.900',
-        'image':
-            'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/ultra-milk_ultra-milk-uht-full-cream-minuman-susu--250-ml-_full04.jpg',
+        'image': 'assets/minuman/ultramilk.png',
         'description_points': [
           'Full cream UHT milk',
           'High in calcium and vitamins',
@@ -376,8 +372,7 @@ class _userscreenState extends State<userscreen> {
         'name': 'Marjan Boudouin Syrup',
         'sub_title': 'Melon',
         'price': 'Rp 26.900',
-        'image':
-            'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/marjan_marjan-boudoin-syrup-melon-460ml_full02.jpg',
+        'image': 'assets/minuman/marjan.png',
         'description_points': [
           'Melon flavored syrup',
           'Refreshing and sweet',
@@ -390,8 +385,7 @@ class _userscreenState extends State<userscreen> {
         'name': 'Teh Pucuk Harum',
         'sub_title': 'Melati',
         'price': 'Rp 3.200',
-        'image':
-            'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/teh-pucuk-harum_teh-pucuk-harum-minuman-teh--250-ml--kemasan-cup-_full02.jpg',
+        'image': 'assets/minuman/pucuk.png',
         'description_points': [
           'Jasmine tea ready to drink',
           'Authentic tea flavor',
@@ -404,8 +398,7 @@ class _userscreenState extends State<userscreen> {
         'name': 'Aqua',
         'sub_title': 'Air Mineral',
         'price': 'Rp 6.900',
-        'image':
-            'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/aqua_aqua-air-mineral-kemasan-botol-600-ml-_full02.jpg',
+        'image': 'assets/minuman/aqua.png',
         'description_points': [
           'Pure mineral water',
           'Hydrating and refreshing',
@@ -418,8 +411,7 @@ class _userscreenState extends State<userscreen> {
         'name': 'Good Day Kopi',
         'sub_title': 'Originale Cappuccino',
         'price': 'Rp 7.900',
-        'image':
-            'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/good-day_good-day-kopi-dingin-kopi-originale-cappuccino--250-ml--kemasan-cup-_full02.jpg',
+        'image': 'assets/minuman/gooday.png',
         'description_points': [
           'Ready-to-drink cappuccino coffee',
           'Rich and creamy taste',
@@ -472,8 +464,9 @@ class _userscreenState extends State<userscreen> {
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(10)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(10),
+                ),
                 child: Image.network(
                   product['image']!,
                   fit: BoxFit.cover,
