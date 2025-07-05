@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -5,8 +8,15 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Logika untuk memuat file properties diletakkan setelah blok plugins.
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 android {
-    namespace = "com.example.montelimart"
+    namespace = "com.montellimart.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -21,7 +31,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.montelimart"
+        applicationId = "com.montellimart.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -30,13 +40,28 @@ android {
         versionName = flutter.versionName
     }
 
-    buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+    // --- BLOK YANG DIPERBAIKI ---
+    signingConfigs {
+        // Gunakan create("release") untuk membuat konfigurasi baru di KTS
+        create("release") {
+            if (keystorePropertiesFile.exists()) {
+                // Gunakan '=' untuk assignment dan getProperty("...") untuk mengambil nilai
+                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
         }
     }
+
+    buildTypes {
+        // Gunakan getByName("release") untuk mengkonfigurasi build type yang sudah ada
+        getByName("release") {
+            // Mengatur agar build type 'release' menggunakan konfigurasi 'release' yang telah dibuat di atas.
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+    // --- AKHIR BLOK YANG DIPERBAIKI ---
 }
 
 flutter {
