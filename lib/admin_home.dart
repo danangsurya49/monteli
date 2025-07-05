@@ -3,7 +3,7 @@ import 'package:montelimart/admin_sales.dart';
 import 'package:montelimart/admin_stock1.dart';
 
 class AdminHome extends StatefulWidget {
-  AdminHome({super.key});
+  const AdminHome({super.key});
 
   @override
   State<AdminHome> createState() => _AdminHomeState();
