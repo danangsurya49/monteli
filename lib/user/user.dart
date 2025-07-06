@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:montelimart/user_detail_produk.dart';
-import 'package:montelimart/user_kategori.dart';
+import 'package:montelimart/user/user_detail_produk.dart';
+import 'package:montelimart/user/user_kategori.dart';
 
 class userscreen extends StatefulWidget {
   const userscreen({super.key});
