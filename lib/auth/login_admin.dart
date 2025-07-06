@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:montelimart/admin_home.dart';
+import 'package:montelimart/admin/admin_home.dart';
 
 class LoginAdmin extends StatefulWidget {
   const LoginAdmin({super.key});
