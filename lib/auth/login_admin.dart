@@ -68,7 +68,7 @@ class _LoginAdminState extends State<LoginAdmin> {
                 TextField(
                   controller: _usernameController,
                   decoration: InputDecoration(
-                    hintText: 'Email/NIP',
+                    hintText: 'E-Mail',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
