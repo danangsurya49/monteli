@@ -91,8 +91,7 @@ class _userscreenState extends State<userscreen> {
       'name': 'Chitato',
       'sub_title': 'Potato Chips',
       'price': 'Rp 8.000',
-      'image':
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRz-M60j4K2_4T2tq0c8Y0J4Y2R4F8w-gX-A&s', // Contoh gambar snack
+      'image': 'assets/makanan ringan/CHITATO.png',
       'category': 'snacks',
       'description_points': [
         'Crispy potato chips',
