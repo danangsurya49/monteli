@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:montelimart/admin_stock1.dart';
-import 'package:montelimart/admin_home.dart';
+import 'package:montelimart/admin/admin_stock1.dart';
+import 'package:montelimart/admin/admin_home.dart';
 
 class AdminSales extends StatefulWidget {
   const AdminSales({super.key});
