@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:montelimart/admin_home.dart';
+import 'package:montelimart/admin/admin_home.dart';
+import 'package:montelimart/admin/admin_main.dart';
 
 class LoginAdmin extends StatefulWidget {
   const LoginAdmin({super.key});
@@ -22,7 +23,7 @@ class _LoginAdminState extends State<LoginAdmin> {
       );
       Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => AdminHome()),
+          MaterialPageRoute(builder: (context) => AdminMain()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -68,7 +69,7 @@ class _LoginAdminState extends State<LoginAdmin> {
                 TextField(
                   controller: _usernameController,
                   decoration: InputDecoration(
-                    hintText: 'Email/NIP',
+                    hintText: 'E-Mail',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

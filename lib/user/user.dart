@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:montelimart/user_detail_produk.dart';
-import 'package:montelimart/user_kategori.dart';
+import 'package:montelimart/user/user_detail_produk.dart';
+import 'package:montelimart/user/user_kategori.dart';
 
 class userscreen extends StatefulWidget {
   const userscreen({super.key});
@@ -11,11 +11,158 @@ class userscreen extends StatefulWidget {
 
 class _userscreenState extends State<userscreen> {
   int _selectedIndex = 0;
+  int _selectedCategoryIndex = 0;
+
+  final List<Map<String, dynamic>> _allProducts = [
+    {
+      'name': 'Yakult',
+      'sub_title': 'Minuman Susu Fermentasi S⁺ 65 ml',
+      'price': 'Rp 10.500',
+      'image': 'assets/minuman/yakult.png',
+      'category': 'Drinks',
+      'description_points': [
+        'Contains good bacteria L. casei Shirota',
+        'Helps maintain good digestion',
+        'Does not contain fat and cholesterol',
+        'Without added preservatives or artificial colors',
+        'Volume: 65 ml per bottle',
+        'Packaging: 5 bottles per pack',
+        'Producer: Yakult Indonesia Persada',
+      ],
+    },
+    {
+      'name': 'Ultra Milk',
+      'sub_title': 'Susu UHT Full Cream',
+      'price': 'Rp 7.900',
+      'image': 'assets/minuman/ultramilk.png',
+      'category': 'Drinks',
+      'description_points': [
+        'Full cream UHT milk',
+        'High in calcium and vitamins',
+        'Suitable for daily consumption',
+        'Shelf-stable and convenient',
+        'Volume: 250 ml',
+        'Producer: Ultrajaya Milk Industry',
+      ],
+    },
+    {
+      'name': 'Marjan Boudouin Syrup',
+      'sub_title': 'Melon',
+      'price': 'Rp 26.900',
+      'image': 'assets/minuman/marjan.png',
+      'category': 'Drinks',
+      'description_points': [
+        'Melon flavored syrup',
+        'Refreshing and sweet',
+        'Great for drinks and desserts',
+        'Volume: 460 ml',
+        'Producer: PT. Lasallefood Indonesia',
+      ],
+    },
+    {
+      'name': 'Teh Pucuk Harum',
+      'sub_title': 'Melati',
+      'price': 'Rp 3.200',
+      'image': 'assets/minuman/pucuk.png',
+      'category': 'Drinks',
+      'description_points': [
+        'Jasmine tea ready to drink',
+        'Authentic tea flavor',
+        'No artificial sweeteners',
+        'Volume: 250 ml',
+        'Producer: PT. Mayora Indah Tbk',
+      ],
+    },
+    {
+      'name': 'Aqua',
+      'sub_title': 'Air Mineral',
+      'price': 'Rp 6.900',
+      'image': 'assets/minuman/aqua.png',
+      'category': 'Drinks',
+      'description_points': [
+        'Pure mineral water',
+        'Hydrating and refreshing',
+        'Sourced from natural springs',
+        'Volume: 600 ml',
+        'Producer: Danone AQUA',
+      ],
+    },
+    {
+      'name': 'Chitato',
+      'sub_title': 'Potato Chips',
+      'price': 'Rp 8.000',
+      'image':
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRz-M60j4K2_4T2tq0c8Y0J4Y2R4F8w-gX-A&s', // Contoh gambar snack
+      'category': 'snacks',
+      'description_points': [
+        'Crispy potato chips',
+        'Various flavors available',
+        'Perfect for snacking',
+      ],
+    },
+    {
+      'name': 'good day',
+      'sub_title': 'coffee',
+      'price': 'Rp 5.000',
+      'image': 'assets/minuman/gooday.png',
+      'category': 'Drinks',
+      'description_point': [
+        'Coffee ready to drink',
+        'Authentic coffee flavor',
+        'No artificial sweeteners',
+      ],
+    },
+    {},
+  ];
+
+  late List<Map<String, dynamic>> _filteredProducts;
+
+  @override
+  void initState() {
+    super.initState();
+    _filterProductsByCategory();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  // Method untuk mengubah kategori yang dipilih dan memperbarui produk
+  void _onCategoryChipTapped(int index) {
+    setState(() {
+      _selectedCategoryIndex = index;
+      _filterProductsByCategory(); // Filter ulang produk
+    });
+  }
+
+  // Method untuk memfilter produk berdasarkan kategori yang dipilih
+  void _filterProductsByCategory() {
+    final List<String> categories = [
+      'Drinks',
+      'snacks',
+      'bread & cakes',
+      'toys',
+      'toiletries',
+      'stationery',
+    ];
+    String selectedCategoryName = categories[_selectedCategoryIndex];
+
+    if (selectedCategoryName == 'All' || selectedCategoryName == 'Drinks') {
+      // 'All' atau 'Drinks' akan menampilkan semua minuman dulu
+      _filteredProducts =
+          _allProducts
+              .where((product) => product['category'] == 'Drinks')
+              .toList();
+    } else {
+      _filteredProducts =
+          _allProducts
+              .where((product) => product['category'] == selectedCategoryName)
+              .toList();
+    }
+    // Jika tidak ada produk di kategori tersebut, bisa tampilkan pesan atau list kosong.
+    // Untuk pengembangan, penting untuk memiliki produk di setiap kategori.
   }
 
   @override
@@ -27,19 +174,19 @@ class _userscreenState extends State<userscreen> {
           children: [
             _buildHeaderCard(),
             const SizedBox(height: 20),
-            _buildProductCategories(),
+            _buildProductCategories(), // Kini akan memanggil method non-static
             const SizedBox(height: 20),
-            _buildProductsGrid(),
+            _buildProductsGrid(), // Kini akan memanggil method non-static
           ],
         ),
       ),
-      const kategoriscreen(), // Halaman Kategori
+      const userscreen(),
       const Center(
         child: Text('Payment Screen', style: TextStyle(fontSize: 24)),
-      ), // Placeholder untuk Payment
+      ),
       const Center(
         child: Text('Profile Screen', style: TextStyle(fontSize: 24)),
-      ), // Placeholder untuk Profile
+      ),
     ];
 
     return Scaffold(
@@ -81,7 +228,7 @@ class _userscreenState extends State<userscreen> {
                     minHeight: 12,
                   ),
                   child: const Text(
-                    '1', // Example: number of items in cart
+                    '1',
                     style: TextStyle(color: Colors.white, fontSize: 8),
                     textAlign: TextAlign.center,
                   ),
@@ -93,14 +240,12 @@ class _userscreenState extends State<userscreen> {
             padding: const EdgeInsets.only(right: 16.0),
             child: CircleAvatar(
               backgroundImage:
-                  Image.network(
-                    'https://via.placeholder.com/150', // Replace with actual user image
-                  ).image,
+                  Image.network('https://via.placeholder.com/150').image,
             ),
           ),
         ],
       ),
-      body: _pages[_selectedIndex], // Menampilkan halaman yang dipilih
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
@@ -119,7 +264,6 @@ class _userscreenState extends State<userscreen> {
     );
   }
 
-  // Hapus keyword 'static' dari semua method ini
   Widget _buildHeaderCard() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -316,17 +460,33 @@ class _userscreenState extends State<userscreen> {
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.only(right: 10),
-                  child: Chip(
-                    label: Text(categories[index]),
-                    backgroundColor:
-                        index == 0 ? Colors.blue.shade50 : Colors.grey.shade200,
-                    labelStyle: TextStyle(
-                      color: index == 0 ? Colors.blue.shade800 : Colors.black87,
-                      fontWeight:
-                          index == 0 ? FontWeight.bold : FontWeight.normal,
+                  child: GestureDetector(
+                    // <-- Tambahkan GestureDetector
+                    onTap: () {
+                      _onCategoryChipTapped(
+                        index,
+                      ); // Panggil method untuk mengubah kategori
+                    },
+                    child: Chip(
+                      label: Text(categories[index]),
+                      backgroundColor:
+                          _selectedCategoryIndex ==
+                                  index // <-- Gunakan state untuk menentukan warna
+                              ? Colors.blue.shade50
+                              : Colors.grey.shade200,
+                      labelStyle: TextStyle(
+                        color:
+                            _selectedCategoryIndex == index
+                                ? Colors.blue.shade800
+                                : Colors.black87,
+                        fontWeight:
+                            _selectedCategoryIndex == index
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                      ),
+                      side: BorderSide.none,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
                     ),
-                    side: BorderSide.none,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
                   ),
                 );
               },
@@ -338,90 +498,7 @@ class _userscreenState extends State<userscreen> {
   }
 
   Widget _buildProductsGrid() {
-    final List<Map<String, dynamic>> products = [
-      {
-        'name': 'Yakult',
-        'sub_title': 'Minuman Susu Fermentasi S⁺ 65 ml',
-        'price': 'Rp 10.500',
-        'image': 'assets/minuman/yakult.png',
-        'description_points': [
-          'Contains good bacteria L. casei Shirota',
-          'Helps maintain good digestion',
-          'Does not contain fat and cholesterol',
-          'Without added preservatives or artificial colors',
-          'Volume: 65 ml per bottle',
-          'Packaging: 5 bottles per pack',
-          'Producer: Yakult Indonesia Persada',
-        ],
-      },
-      {
-        'name': 'Ultra Milk',
-        'sub_title': 'Susu UHT Full Cream',
-        'price': 'Rp 7.900',
-        'image': 'assets/minuman/ultramilk.png',
-        'description_points': [
-          'Full cream UHT milk',
-          'High in calcium and vitamins',
-          'Suitable for daily consumption',
-          'Shelf-stable and convenient',
-          'Volume: 250 ml',
-          'Producer: Ultrajaya Milk Industry',
-        ],
-      },
-      {
-        'name': 'Marjan Boudouin Syrup',
-        'sub_title': 'Melon',
-        'price': 'Rp 26.900',
-        'image': 'assets/minuman/marjan.png',
-        'description_points': [
-          'Melon flavored syrup',
-          'Refreshing and sweet',
-          'Great for drinks and desserts',
-          'Volume: 460 ml',
-          'Producer: PT. Lasallefood Indonesia',
-        ],
-      },
-      {
-        'name': 'Teh Pucuk Harum',
-        'sub_title': 'Melati',
-        'price': 'Rp 3.200',
-        'image': 'assets/minuman/pucuk.png',
-        'description_points': [
-          'Jasmine tea ready to drink',
-          'Authentic tea flavor',
-          'No artificial sweeteners',
-          'Volume: 250 ml',
-          'Producer: PT. Mayora Indah Tbk',
-        ],
-      },
-      {
-        'name': 'Aqua',
-        'sub_title': 'Air Mineral',
-        'price': 'Rp 6.900',
-        'image': 'assets/minuman/aqua.png',
-        'description_points': [
-          'Pure mineral water',
-          'Hydrating and refreshing',
-          'Sourced from natural springs',
-          'Volume: 600 ml',
-          'Producer: Danone AQUA',
-        ],
-      },
-      {
-        'name': 'Good Day Kopi',
-        'sub_title': 'Originale Cappuccino',
-        'price': 'Rp 7.900',
-        'image': 'assets/minuman/gooday.png',
-        'description_points': [
-          'Ready-to-drink cappuccino coffee',
-          'Rich and creamy taste',
-          'Perfect for on-the-go',
-          'Volume: 250 ml',
-          'Producer: PT. Santos Jaya Abadi',
-        ],
-      },
-    ];
-
+    // Gunakan _filteredProducts, bukan _allProducts
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: GridView.builder(
@@ -431,22 +508,22 @@ class _userscreenState extends State<userscreen> {
           crossAxisCount: 2,
           crossAxisSpacing: 16.0,
           mainAxisSpacing: 16.0,
-          childAspectRatio: 0.7, // Adjust as needed to fit content
+          childAspectRatio: 0.7,
         ),
-        itemCount: products.length,
+        itemCount:
+            _filteredProducts.length, // <-- Gunakan _filteredProducts.length
         itemBuilder: (context, index) {
-          return _buildProductCard(products[index]);
+          return _buildProductCard(
+            _filteredProducts[index],
+          ); // <-- Gunakan _filteredProducts[index]
         },
       ),
     );
   }
 
-  // Hapus keyword 'static' dari method ini
   Widget _buildProductCard(Map<String, dynamic> product) {
     return GestureDetector(
       onTap: () {
-        // Karena _buildProductCard sekarang adalah instance method,
-        // ia memiliki akses ke 'context' dari _userscreenState
         Navigator.push(
           context,
           MaterialPageRoute(

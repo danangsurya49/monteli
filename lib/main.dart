@@ -1,12 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:montelimart/login_admin.dart';
-import 'package:montelimart/user.dart';
-import 'package:montelimart/admin_home.dart';
-import 'package:montelimart/user_detail_produk.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:montelimart/auth/login_admin.dart';
+import 'package:montelimart/utils/constants.dart';
+import 'package:montelimart/utils/app_routes.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Inisialisasi GetStorage
+  await GetStorage.init();
+
+  // Inisialisasi Supabase
+  await Supabase.initialize(
+    url: supabaseUrl,
+    anonKey: supabaseAnonKey,
+  );
+
   runApp(const MyApp());
 }
+
+// Helper global untuk akses mudah ke client Supabase
+final supabase = Supabase.instance.client;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
