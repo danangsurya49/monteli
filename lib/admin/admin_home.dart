@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:montelimart/admin_sales.dart';
-import 'package:montelimart/admin_stock1.dart';
+import 'package:montelimart/admin/admin_sales.dart';
+import 'package:montelimart/admin/admin_stock1.dart';
+import 'package:montelimart/supabase_services.dart';
 
 class AdminHome extends StatefulWidget {
   AdminHome({super.key});
@@ -10,6 +11,22 @@ class AdminHome extends StatefulWidget {
 }
 
 class _AdminHomeState extends State<AdminHome> {
+  num totalSales = 0;
+  bool isLoadingSales = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchTotalSales();
+  }
+
+  Future<void> fetchTotalSales() async {
+    totalSales = await SupabaseService().getTotalPenjualanKeseluruhan();
+    setState(() {
+      isLoadingSales = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,7 +118,7 @@ class _AdminHomeState extends State<AdminHome> {
                 ),
                 child: Column(
                   children: [
-                    Text('Total Sales', style: TextStyle(color: Colors.white)), // Sudah diubah
+                    Text('Total Sales', style: TextStyle(color: Colors.white)),
                     SizedBox(height: 8),
                     Container(
                       padding: EdgeInsets.all(16),
@@ -110,7 +127,12 @@ class _AdminHomeState extends State<AdminHome> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Center(
-                        child: Text('IDR0.0', style: TextStyle(color: Colors.red, fontSize: 24)),
+                        child: isLoadingSales
+                            ? CircularProgressIndicator()
+                            : Text(
+                                'IDR${totalSales.toStringAsFixed(0)}',
+                                style: TextStyle(color: Colors.red, fontSize: 24),
+                              ),
                       ),
                     ),
                   ],
@@ -165,48 +187,6 @@ class _AdminHomeState extends State<AdminHome> {
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.blueGrey,
-        currentIndex: 2, // Halaman Stock
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => AdminHome()),
-              );
-              break;
-            case 1:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => AdminSales()),
-              );
-              break;
-            case 2:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => AdminStock1()),
-              );
-              break;
-          }
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.trending_up),
-            label: 'Sales',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: 'Stock',
-          ),
-        ],
       ),
     );
   }
