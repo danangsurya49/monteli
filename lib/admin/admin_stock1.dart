@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:montelimart/admin/admin_home.dart';
 import 'package:montelimart/admin/admin_sales.dart';
 import 'package:montelimart/admin/admin_stock2.dart';
+import 'package:montelimart/supabase_services.dart';
 
 class AdminStock1 extends StatefulWidget {
   const AdminStock1({super.key});
@@ -11,6 +12,22 @@ class AdminStock1 extends StatefulWidget {
 }
 
 class _AdminStockState extends State<AdminStock1> {
+  List<Map<String, dynamic>> kategoriList = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchKategori();
+  }
+
+  Future<void> fetchKategori() async {
+    kategoriList = await SupabaseService().getAllKategori();
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,240 +80,75 @@ class _AdminStockState extends State<AdminStock1> {
                 ),
               ),
               SizedBox(height: 16),
-              // Beverages
-              Container(
-                margin: EdgeInsets.only(bottom: 16),
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.orange[100],
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Image.asset('assets/kategori/Sparkling_Berry_Juice.jpg',
-                          fit: BoxFit.contain),
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Text(
-                        'Beverages',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.arrow_forward, color: Colors.teal),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AdminStock2(),
+              isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : Column(
+                      children: kategoriList.asMap().entries.map((entry) {
+                        final idx = entry.key;
+                        final kategori = entry.value;
+                        // Daftar warna berbeda untuk box
+                        final boxColors = [
+                          Colors.orange[100],
+                          Colors.teal[100],
+                          Colors.purple[100],
+                          Colors.blue[100],
+                          Colors.green[100],
+                          Colors.red[100],
+                          Colors.yellow[100],
+                        ];
+                        final color = boxColors[idx % boxColors.length];
+                        return Container(
+                          margin: EdgeInsets.only(bottom: 16),
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: color,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 64,
+                                height: 64,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: kategori['gambar_kategori'] != null
+                                    ? Image.network(
+                                        kategori['gambar_kategori'],
+                                        fit: BoxFit.contain,
+                                      )
+                                    : Icon(Icons.image_not_supported, size: 32),
+                              ),
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: Text(
+                                  kategori['nama_kategori'] ?? '',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.arrow_forward, color: Colors.teal),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AdminStock2(kategori: kategori),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         );
-                      },
+                      }).toList(),
                     ),
-                  ],
-                ),
-              ),
-              // Snacks
-              Container(
-                margin: EdgeInsets.only(bottom: 16),
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.cyan[100],
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Image.asset('assets/kategori/burger.webp', fit: BoxFit.contain),
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Text(
-                        'Snacks',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.arrow_forward, color: Colors.teal),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              ),
-              // Breads & Cakes
-              Container(
-                margin: EdgeInsets.only(bottom: 16),
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.yellow[100],
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Image.asset('assets/kategori/march_7th.jpg', fit: BoxFit.contain),
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Text(
-                        'Breads & Cakes',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.arrow_forward, color: Colors.teal),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              ),
-              // Toys
-              Container(
-                margin: EdgeInsets.only(bottom: 16),
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.orange[100],
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Image.asset('assets/kategori/jellyfish_on_the_staircase.png', fit: BoxFit.contain),
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Text(
-                        'Toys',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.arrow_forward, color: Colors.teal),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              ),
-              // Toiletries
-              Container(
-                margin: EdgeInsets.only(bottom: 16),
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.cyan[100],
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Image.asset('assets/kategori/Fortune_Glue.webp',
-                          fit: BoxFit.contain),
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Text(
-                        'Toiletries',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.arrow_forward, color: Colors.teal),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.blueGrey,
-        currentIndex: 2, // Halaman Stock
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => AdminHome()),
-              );
-              break;
-            case 1:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => AdminSales()),
-              );
-              break;
-            case 2:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => AdminStock1()),
-              );
-              break;
-          }
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.trending_up),
-            label: 'Sales',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: 'Stock',
-          ),
-        ],
       ),
     );
   }
