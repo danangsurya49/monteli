@@ -3,6 +3,7 @@ import 'package:montelimart/user/user.dart';
 import 'package:montelimart/auth/register_user.dart';
 import 'package:montelimart/auth/login_admin.dart';
 import 'package:montelimart/supabase_services.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginUser extends StatefulWidget {
   const LoginUser({super.key});
@@ -21,14 +22,15 @@ class _LoginUserState extends State<LoginUser> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    final user = await SupabaseService()
-        .loginUser(email: email, password: password);
-    setState(() => _isLoading = false);
+    print('Mulai login...');
+    final response = await Supabase.instance.client.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
+    print('Login response: ${response.user}, error: ${response.session?.accessToken == null ? "Login failed" : "No error"}');
 
-    if (user != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login berhasil!')),
-      );
+    if (response.user != null) {
+      // Login sukses
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => userscreen()),
@@ -38,6 +40,7 @@ class _LoginUserState extends State<LoginUser> {
         SnackBar(content: Text('Email atau password salah!')),
       );
     }
+    setState(() => _isLoading = false);
   }
 
   @override

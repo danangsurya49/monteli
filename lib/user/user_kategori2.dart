@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:montelimart/supabase_services.dart';
 import 'package:montelimart/user/user_detail_produk.dart';
+import 'package:get_storage/get_storage.dart';
 
 class UserKategori2 extends StatefulWidget {
   final Map<String, dynamic> kategori;
@@ -215,7 +216,22 @@ class _UserKategori2State extends State<UserKategori2> {
                                     child: IconButton(
                                       icon: const Icon(Icons.shopping_bag_outlined, color: Colors.white),
                                       onPressed: () {
-                                        // TODO: Tambahkan ke keranjang
+                                        final box = GetStorage();
+                                        final cart = List<Map<String, dynamic>>.from(box.read('cart') ?? []);
+                                        cart.add({
+                                          'id_barang': item['id_minuman'] ?? item['id_makanan'] ?? item['id_mainan'] ?? item['id_roti'] ?? item['id_rumahtangga'] ?? '',
+                                          'id_kategori': item['id_kategori'] ?? '',
+                                          'user_id': 'dummy-user-uuid', // Ganti dengan UUID user login jika ada
+                                          'nama_kategori': item['nama_kategori'] ?? '',
+                                          'name': nama,
+                                          'image': gambar ?? '',
+                                          'price': 'Rp ${harga ?? 0}',
+                                          'qty': 1,
+                                        });
+                                        box.write('cart', cart);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Added to cart!')),
+                                        );
                                       },
                                     ),
                                   ),

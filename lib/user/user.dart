@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:montelimart/user/user_detail_produk.dart';
 import 'package:montelimart/user/user_kategori.dart';
+import 'package:montelimart/user/user_payment.dart';
+import 'package:montelimart/user/user_cart.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:montelimart/supabase_services.dart';
 
 class userscreen extends StatefulWidget {
@@ -17,17 +20,29 @@ class _userscreenState extends State<userscreen> {
   List<Map<String, dynamic>> _allProducts = [];
   late List<Map<String, dynamic>> _filteredProducts;
   bool _isLoading = true;
+  final box = GetStorage();
+  int cartCount = 0;
 
   @override
   void initState() {
     super.initState();
     fetchProducts();
+    updateCartCount();
+    box.listenKey('cart', (value) {
+      updateCartCount();
+    });
   }
 
   Future<void> fetchProducts() async {
-    // Ambil produk dari semua tabel via SupabaseService
-    _allProducts = await SupabaseService().getAllProduk();
-    _filterProductsByCategory();
+    try {
+      _allProducts = await SupabaseService().getAllProduk();
+      _filterProductsByCategory();
+    } catch (e) {
+      print('Error fetch produk: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal mengambil produk: $e')),
+      );
+    }
     setState(() {
       _isLoading = false;
     });
@@ -66,6 +81,31 @@ class _userscreenState extends State<userscreen> {
     }
   }
 
+  void addToCart(Map<String, dynamic> product) {
+    final cart = List<Map<String, dynamic>>.from(box.read('cart') ?? []);
+    cart.add({
+      'id_barang': product['id_minuman'] ?? product['id_makanan'] ?? product['id_mainan'] ?? product['id_roti'] ?? product['id_rumahtangga'] ?? '',
+      'id_kategori': product['id_kategori'] ?? '',
+      'user_id': 'dummy-user-uuid', // Ganti dengan UUID user login jika ada
+      'nama_kategori': product['nama_kategori'] ?? '',
+      'name': product['name'] ?? '',
+      'image': product['image'] ?? '',
+      'price': product['price'] ?? '',
+      'qty': 1,
+    });
+    box.write('cart', cart);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Added to cart!')),
+    );
+  }
+
+  void updateCartCount() {
+    final cart = List<Map<String, dynamic>>.from(box.read('cart') ?? []);
+    setState(() {
+      cartCount = cart.length;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> _pages = [
@@ -82,9 +122,7 @@ class _userscreenState extends State<userscreen> {
         ),
       ),
       kategoriscreen(),
-      const Center(
-        child: Text('Payment Screen', style: TextStyle(fontSize: 24)),
-      ),
+      userpayment(),
       const Center(
         child: Text('Profile Screen', style: TextStyle(fontSize: 24)),
       ),
@@ -113,28 +151,34 @@ class _userscreenState extends State<userscreen> {
                   Icons.shopping_bag_outlined,
                   color: Colors.black,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const UserCart()),
+                  );
+                },
               ),
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  constraints: const BoxConstraints(
-                    minWidth: 12,
-                    minHeight: 12,
-                  ),
-                  child: const Text(
-                    '1',
-                    style: TextStyle(color: Colors.white, fontSize: 8),
-                    textAlign: TextAlign.center,
+              if (cartCount > 0)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      '$cartCount',
+                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           Padding(
@@ -510,7 +554,7 @@ class _userscreenState extends State<userscreen> {
                           child: IconButton(
                             icon: const Icon(Icons.shopping_bag_outlined, color: Colors.white),
                             onPressed: () {
-                              // TODO: Tambahkan ke keranjang
+                              addToCart(product);
                             },
                           ),
                         ),

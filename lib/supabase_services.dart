@@ -357,6 +357,36 @@ class SupabaseService {
     });
   }
 
+  Future<void> insertTransaksiPenjualan({
+    required String userId,
+    required String email,
+    required String idKategori,
+    required String namaKategori,
+    required String idBarang,
+    required String namaBarang,
+    required String alamat,
+    required String service,
+    required String paymentMethod,
+    required int jumlah,
+    required num totalHarga,
+    required String noTelp,
+  }) async {
+    await supabase.from('transaksi_penjualan').insert({
+      'user_id': userId,
+      'email': email,
+      'id_kategori': idKategori,
+      'nama_kategori': namaKategori,
+      'id_barang': idBarang,
+      'nama_barang': namaBarang,
+      'alamat': alamat,
+      'service': service,
+      'payment_method': paymentMethod,
+      'jumlah': jumlah,
+      'total harga': totalHarga,
+      'no_telp': noTelp,
+    });
+  }
+
   // --- VIEW PENJUALAN PER KATEGORI ---
   Future<List<Map<String, dynamic>>> getPenjualanPerKategori() async {
     final data = await supabase.from('penjualan_per_kategori').select();
@@ -394,31 +424,70 @@ class SupabaseService {
     return data['total_penghasilan'] ?? 0;
   }
 
-  Future<void> registerUser({
-    required String username,
+  Future<String?> registerUser({
     required String email,
     required String password,
+    required String username,
     DateTime? tanggalLahir,
   }) async {
-    await supabase.from('user_registrasi').insert({
-      'username': username,
-      'email': email,
-      'password': password,
-      'tanggal_lahir': tanggalLahir?.toIso8601String(),
-    });
+    try {
+      // 1. Register ke Supabase Auth
+      final response = await Supabase.instance.client.auth.signUp(
+        email: email,
+        password: password,
+      );
+      final user = response.user;
+      if (user == null) {
+        return 'Registrasi gagal: user null';
+      }
+
+      // 2. Insert data tambahan ke tabel user_registrasi
+      await Supabase.instance.client.from('user_registrasi').insert({
+        'user_id': user.id, // gunakan id dari Supabase Auth
+        'email': email,
+        'username': username,
+        'tanggal_lahir': tanggalLahir?.toIso8601String(),
+      });
+
+      return null; // sukses
+    } on PostgrestException catch (e) {
+      if (e.code == '23505') {
+        // Duplicate key (username/email sudah ada)
+        return 'Username atau email sudah digunakan!';
+      }
+      return 'Registrasi gagal: ${e.message}';
+    } catch (e) {
+      return 'Registrasi gagal: $e';
+    }
   }
 
   Future<Map<String, dynamic>?> loginUser({
     required String email,
     required String password,
   }) async {
-    final data = await supabase
-        .from('user_registrasi')
-        .select()
-        .eq('email', email)
-        .eq('password', password)
-        .maybeSingle();
-    return data;
+    try {
+      // 1. Login ke Supabase Auth
+      final response = await Supabase.instance.client.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      final user = response.user;
+      if (user == null) {
+        return null; // login gagal
+      }
+
+      // 2. Ambil data user tambahan dari tabel user_registrasi
+      final userData = await Supabase.instance.client
+          .from('user_registrasi')
+          .select()
+          .eq('email', email)
+          .maybeSingle();
+
+      return userData; // bisa null jika tidak ada
+    } catch (e) {
+      // Tangani error login
+      return null;
+    }
   }
 
   Future<List<Map<String, dynamic>>> getAllProduk() async {
@@ -431,6 +500,9 @@ class SupabaseService {
     List<Map<String, dynamic>> produk = [];
 
     produk.addAll(List<Map<String, dynamic>>.from(minuman).map((e) => {
+      'id_minuman': e['id_minuman'],
+      'id_kategori': e['id_kategori'],
+      'nama_kategori': e['nama_kategori'],
       'name': e['nama_minuman'],
       'sub_title': '',
       'price': 'Rp ${e['harga_jual'] ?? 0}',
@@ -440,6 +512,9 @@ class SupabaseService {
     }));
 
     produk.addAll(List<Map<String, dynamic>>.from(makanan).map((e) => {
+      'id_makanan': e['id_makanan'],
+      'id_kategori': e['id_kategori'],
+      'nama_kategori': e['nama_kategori'],
       'name': e['nama_makanan'],
       'sub_title': '',
       'price': 'Rp ${e['harga_jual'] ?? 0}',
@@ -449,6 +524,9 @@ class SupabaseService {
     }));
 
     produk.addAll(List<Map<String, dynamic>>.from(mainan).map((e) => {
+      'id_mainan': e['id_mainan'],
+      'id_kategori': e['id_kategori'],
+      'nama_kategori': e['nama_kategori'],
       'name': e['nama_mainan'],
       'sub_title': '',
       'price': 'Rp ${e['harga_jual'] ?? 0}',
@@ -458,6 +536,9 @@ class SupabaseService {
     }));
 
     produk.addAll(List<Map<String, dynamic>>.from(roti).map((e) => {
+      'id_roti': e['id_roti'],
+      'id_kategori': e['id_kategori'],
+      'nama_kategori': e['nama_kategori'],
       'name': e['nama_roti'],
       'sub_title': '',
       'price': 'Rp ${e['harga_jual'] ?? 0}',
@@ -467,6 +548,9 @@ class SupabaseService {
     }));
 
     produk.addAll(List<Map<String, dynamic>>.from(rumahtangga).map((e) => {
+      'id_rumahtangga': e['id_rumahtangga'],
+      'id_kategori': e['id_kategori'],
+      'nama_kategori': e['nama_kategori'],
       'name': e['nama_barang'],
       'sub_title': '',
       'price': 'Rp ${e['harga_jual'] ?? 0}',

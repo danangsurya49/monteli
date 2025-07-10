@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:montelimart/auth/login_user.dart';
 import 'package:montelimart/supabase_services.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RegisterUser extends StatefulWidget {
   const RegisterUser({super.key});
@@ -17,17 +18,84 @@ class _RegisterUserState extends State<RegisterUser> {
   DateTime? _selectedDate;
   bool _isLoading = false;
 
+  Future<String?> registerUser({
+    required String email,
+    required String password,
+    required String username,
+    DateTime? tanggalLahir,
+  }) async {
+    try {
+      // 1. Register ke Supabase Auth
+      final response = await Supabase.instance.client.auth.signUp(
+        email: email,
+        password: password,
+      );
+      final user = response.user;
+      if (user == null) {
+        return 'Registrasi gagal: user null';
+      }
+
+      // 2. Insert data tambahan ke tabel user_registrasi
+      await Supabase.instance.client.from('user_registrasi').insert({
+        'user_id': user.id, // gunakan id dari Supabase Auth
+        'email': email,
+        'username': username,
+        'tanggal_lahir': tanggalLahir?.toIso8601String(),
+      });
+
+      return null; // sukses
+    } on PostgrestException catch (e) {
+      if (e.code == '23505') {
+        // Duplicate key (username/email sudah ada)
+        return 'Username atau email sudah digunakan!';
+      }
+      return 'Registrasi gagal: ${e.message}';
+    } catch (e) {
+      return 'Registrasi gagal: $e';
+    }
+  }
+
+  Future<Map<String, dynamic>?> loginUser({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      // 1. Login ke Supabase Auth
+      final response = await Supabase.instance.client.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      final user = response.user;
+      if (user == null) {
+        return null; // login gagal
+      }
+
+      // 2. Ambil data user tambahan dari tabel user_registrasi
+      final userData = await Supabase.instance.client
+          .from('user_registrasi')
+          .select()
+          .eq('email', email)
+          .maybeSingle();
+
+      return userData; // bisa null jika tidak ada
+    } catch (e) {
+      // Tangani error login
+      return null;
+    }
+  }
+
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
 
-    try {
-      await SupabaseService().registerUser(
-        username: _usernameController.text.trim(),
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-        tanggalLahir: _selectedDate,
-      );
+    final error = await registerUser(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+      username: _usernameController.text.trim(),
+      tanggalLahir: _selectedDate,
+    );
+    if (error == null) {
+      // Registrasi sukses
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registrasi berhasil! Silakan login.')),
       );
@@ -35,9 +103,10 @@ class _RegisterUserState extends State<RegisterUser> {
         context,
         MaterialPageRoute(builder: (context) => LoginUser()),
       );
-    } catch (e) {
+    } else {
+      // Tampilkan error ke user
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registrasi gagal: $e')),
+        SnackBar(content: Text('Registrasi gagal: $error')),
       );
     }
     setState(() => _isLoading = false);

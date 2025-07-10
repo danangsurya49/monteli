@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 
 class user_detail_produkscreen extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -10,7 +11,25 @@ class user_detail_produkscreen extends StatefulWidget {
 }
 
 class _user_detail_produkscreenState extends State<user_detail_produkscreen> {
-  bool _isDetailsProductsExpanded = false; // Mengubah nama state untuk menghindari kebingungan
+  final box = GetStorage();
+
+  void addToCart() {
+    final cart = List<Map<String, dynamic>>.from(box.read('cart') ?? []);
+    cart.add({
+      'id_barang': widget.product['id_minuman'] ?? widget.product['id_makanan'] ?? widget.product['id_mainan'] ?? widget.product['id_roti'] ?? widget.product['id_rumahtangga'] ?? '',
+      'id_kategori': widget.product['id_kategori'] ?? '',
+      'user_id': 'dummy-user-uuid', // Ganti dengan UUID user login jika ada
+      'nama_kategori': widget.product['nama_kategori'] ?? '',
+      'name': widget.product['name'] ?? '',
+      'image': widget.product['image'] ?? '',
+      'price': widget.product['price'] ?? '',
+      'qty': 1,
+    });
+    box.write('cart', cart);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Added to cart!')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +56,6 @@ class _user_detail_produkscreenState extends State<user_detail_produkscreen> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_bag_outlined, color: Colors.black),
-            onPressed: () {},
-          ),
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: CircleAvatar(
@@ -51,27 +66,28 @@ class _user_detail_produkscreenState extends State<user_detail_produkscreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView( // <--- Bungkus seluruh body dengan SingleChildScrollView
-        child: Column( // <--- Gunakan Column utama
+      body: SingleChildScrollView(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Bagian Gambar Produk
+            // Gambar Produk
             Container(
-              color: Colors.white, // Background untuk area gambar
+              color: Colors.white,
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: Image.network(
-                widget.product['image']!,
-                height: MediaQuery.of(context).size.height * 0.35, // Sesuaikan tinggi gambar
+                widget.product['image'] ?? '',
+                height: MediaQuery.of(context).size.height * 0.35,
                 fit: BoxFit.contain,
+                errorBuilder: (c, e, s) => const Icon(Icons.image, size: 80, color: Colors.grey),
               ),
             ),
-            // Bagian Detail Produk (latar belakang gelap)
+            // Detail Produk
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20.0),
               decoration: const BoxDecoration(
-                color: Color(0xFF282828), // Dark grey background
+                color: Color(0xFF282828),
                 borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
               ),
               child: Column(
@@ -80,94 +96,34 @@ class _user_detail_produkscreenState extends State<user_detail_produkscreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.product['name']!,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            widget.product['sub_title'] ?? 'Minuman Susu Fermentasi',
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.7),
-                              fontSize: 16,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            children: [
-                              const Icon(Icons.star, color: Colors.amber, size: 18),
-                              const Icon(Icons.star, color: Colors.amber, size: 18),
-                              const Icon(Icons.star, color: Colors.amber, size: 18),
-                              const Icon(Icons.star, color: Colors.amber, size: 18),
-                              Icon(Icons.star_half, color: Colors.amber, size: 18),
-                              const SizedBox(width: 8),
-                              Text(
-                                '(100 Reviews)',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.6),
-                                  fontSize: 12,
-                                ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.product['name'] ?? '',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ],
-                          ),
-                        ],
+                            ),
+                            Text(
+                              widget.product['sub_title'] ?? '',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.7),
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       Text(
-                        widget.product['price']!,
+                        widget.product['price'] ?? '',
                         style: const TextStyle(
                           color: Colors.red,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[700],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.shopping_bag_outlined, color: Colors.white),
-                          onPressed: () {},
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[700],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.play_arrow, color: Colors.white),
-                          onPressed: () {},
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4CAF50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                          ),
-                          child: const Text(
-                            'Purchase',
-                            style: TextStyle(fontSize: 18, color: Colors.white),
-                          ),
                         ),
                       ),
                     ],
@@ -207,46 +163,22 @@ class _user_detail_produkscreenState extends State<user_detail_produkscreen> {
                         fontStyle: FontStyle.italic,
                       ),
                     ),
-                  const SizedBox(height: 20),
-                  Divider(color: Colors.white.withOpacity(0.3)),
-                  Theme(
-                    data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-                    child: ExpansionTile(
-                      title: const Text(
-                        'Details Products',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: addToCart,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4CAF50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
+                        padding: const EdgeInsets.symmetric(vertical: 15),
                       ),
-                      trailing: Icon(
-                        _isDetailsProductsExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                        color: Colors.white,
+                      child: const Text(
+                        'Add to cart',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
-                      onExpansionChanged: (bool expanded) {
-                        setState(() {
-                          _isDetailsProductsExpanded = expanded;
-                        });
-                      },
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'This section can contain more technical or specific details for ${widget.product['name']}.',
-                                style: TextStyle(color: Colors.white.withOpacity(0.7)),
-                              ),
-                              Text(
-                                'For example: Ingredients, Nutritional Information, Usage Instructions, etc.',
-                                style: TextStyle(color: Colors.white.withOpacity(0.7)),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
                     ),
                   ),
                 ],
