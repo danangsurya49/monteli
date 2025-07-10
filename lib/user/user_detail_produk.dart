@@ -255,26 +255,6 @@ class _user_detail_produkscreenState extends State<user_detail_produkscreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category),
-            label: 'Category',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.payment), label: 'Payment'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
-        ],
-        currentIndex: 0, // Ini harus disesuaikan jika layar ini bukan bagian dari navigasi tab utama
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        onTap: (index) {
-          // Logika navigasi di bottom nav bar untuk layar detail.
-          // Jika layar ini di-push, biasanya bottom nav ini tidak berinteraksi
-          // langsung dengan tab di layar induk. Anda mungkin ingin menghapusnya.
-          // Untuk saat ini, kita akan membiarkannya tetapi perlu diingat.
-        },
-      ),
     );
   }
 } 

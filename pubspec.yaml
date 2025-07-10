@@ -72,20 +72,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/Montelli_Family_Logo.png
-    - assets/kategori/jellyfish_on_the_staircase.png
-    - assets/kategori/Interastral_Big_Lotto.png
-    - assets/kategori/Sparkling_Berry_Juice.jpg
-    - assets/kategori/burger.jpg
-    - assets/kategori/march_7th.jpg
-    - assets/kategori/Fortune_Glue.jpg
-    - assets/minuman/ultramilk.png
-    - assets/minuman/pucuk.png
-    - assets/minuman/yakult.png
-    - assets/minuman/aqua.png
-    - assets/minuman/gooday.png
-    - assets/minuman/marjan.png
-
+    - assets/Montelli_Family_Logo.png 
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

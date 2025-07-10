@@ -421,5 +421,60 @@ class SupabaseService {
     return data;
   }
 
-  
+  Future<List<Map<String, dynamic>>> getAllProduk() async {
+    final minuman = await supabase.from('minuman').select();
+    final makanan = await supabase.from('makanan').select();
+    final mainan = await supabase.from('mainan').select();
+    final roti = await supabase.from('roti').select();
+    final rumahtangga = await supabase.from('rumahtangga').select();
+
+    List<Map<String, dynamic>> produk = [];
+
+    produk.addAll(List<Map<String, dynamic>>.from(minuman).map((e) => {
+      'name': e['nama_minuman'],
+      'sub_title': '',
+      'price': 'Rp ${e['harga_jual'] ?? 0}',
+      'image': e['gambar_barang'] ?? '',
+      'category': 'Drinks',
+      'description_points': [e['deskripsi_barang'] ?? ''],
+    }));
+
+    produk.addAll(List<Map<String, dynamic>>.from(makanan).map((e) => {
+      'name': e['nama_makanan'],
+      'sub_title': '',
+      'price': 'Rp ${e['harga_jual'] ?? 0}',
+      'image': e['gambar_barang'] ?? '',
+      'category': 'snacks', // Pastikan ini 'snacks' jika ingin tampil di tab snack
+      'description_points': [e['deskripsi_barang'] ?? ''],
+    }));
+
+    produk.addAll(List<Map<String, dynamic>>.from(mainan).map((e) => {
+      'name': e['nama_mainan'],
+      'sub_title': '',
+      'price': 'Rp ${e['harga_jual'] ?? 0}',
+      'image': e['gambar_barang'] ?? '',
+      'category': 'toys',
+      'description_points': [e['deskripsi_barang'] ?? ''],
+    }));
+
+    produk.addAll(List<Map<String, dynamic>>.from(roti).map((e) => {
+      'name': e['nama_roti'],
+      'sub_title': '',
+      'price': 'Rp ${e['harga_jual'] ?? 0}',
+      'image': e['gambar_barang'] ?? '',
+      'category': 'bread & cakes',
+      'description_points': [e['deskripsi_barang'] ?? ''],
+    }));
+
+    produk.addAll(List<Map<String, dynamic>>.from(rumahtangga).map((e) => {
+      'name': e['nama_barang'],
+      'sub_title': '',
+      'price': 'Rp ${e['harga_jual'] ?? 0}',
+      'image': e['gambar_barang'] ?? '',
+      'category': 'toiletries',
+      'description_points': [e['deskripsi_barang'] ?? ''],
+    }));
+
+    return produk;
+  }
 }

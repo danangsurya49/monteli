@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:montelimart/supabase_services.dart';
+import 'package:montelimart/user/user_kategori2.dart';
 
 class kategoriscreen extends StatefulWidget {
   const kategoriscreen({super.key});
@@ -8,39 +10,57 @@ class kategoriscreen extends StatefulWidget {
 }
 
 class _kategoriscreenState extends State<kategoriscreen> {
-  final List<Map<String, dynamic>> categories = [
-    {
-      'name': 'Beverages',
-      'image': 'assets/kategori/Sparkling_Berry_Juice.jpg',
-      'color': const Color(0xFFFDE7DF),
-    },
-    {
-      'name': 'Snacks',
-      'image': 'assets/kategori/burger.jpg',
-      'color': const Color(0xFFD6F5F0),
-    },
-    {
-      'name': 'Breads & Cakes',
-      'image': 'assets/kategori/march_7th.jpg',
-      'color': const Color(0xFFFFFAD6),
-    },
-    {
-      'name': 'Toys',
-      'image': 'assets/kategori/jellyfish_on_the_staircase.png',
-      'color': const Color(0xFFF0E0D6),
-    },
-    {
-      'name': 'Toiletries',
-      'image': 'assets/kategori/Interastral_Big_Lotto.png',
-      'color': const Color(0xFFD3E0E2),
-    },
-  ];
+  List<Map<String, dynamic>> kategoriList = [];
+  bool isLoading = true;
+  int _selectedIndex = 1;
+
+  void _onItemTapped(int index) {
+    if (index == _selectedIndex) return;
+    setState(() {
+      _selectedIndex = index;
+    });
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/home');
+        break;
+      case 1:
+        // Already on Category
+        break;
+      case 2:
+        Navigator.pushReplacementNamed(context, '/payment');
+        break;
+      case 3:
+        Navigator.pushReplacementNamed(context, '/profile');
+        break;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchKategori();
+  }
+
+  Future<void> fetchKategori() async {
+    kategoriList = await SupabaseService().getAllKategori();
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final boxColors = [
+      Colors.orange[100],
+      Colors.teal[100],
+      Colors.purple[100],
+      Colors.blue[100],
+      Colors.green[100],
+      Colors.red[100],
+      Colors.yellow[100],
+    ];
+
     return Scaffold(
-      // HAPUS SELURUH WIDGET AppBar DARI SINI!
-      // appBar: AppBar(...) // Hapus atau jadikan komentar baris ini
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -56,55 +76,68 @@ class _kategoriscreenState extends State<kategoriscreen> {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: ListView.builder(
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  return _buildCategoryCard(categories[index]);
-                },
-              ),
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      itemCount: kategoriList.length,
+                      itemBuilder: (context, idx) {
+                        final kategori = kategoriList[idx];
+                        final color = boxColors[idx % boxColors.length];
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: color,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 64,
+                                height: 64,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: kategori['gambar_kategori'] != null &&
+                                        kategori['gambar_kategori'].toString().isNotEmpty
+                                    ? Image.network(
+                                        kategori['gambar_kategori'],
+                                        fit: BoxFit.contain,
+                                      )
+                                    : const Icon(Icons.image_not_supported, size: 32),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Text(
+                                  kategori['nama_kategori'] ?? '',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.arrow_forward, color: Colors.teal),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => UserKategori2(kategori: kategori),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
             ),
           ],
         ),
       ),
-      // bottomNavigationBar sudah dihapus sebelumnya
-    );
-  }
-
-  Widget _buildCategoryCard(Map<String, dynamic> category) {
-    return GestureDetector(
-      onTap: () {
-        print('Kategori ${category['name']} ditekan!');
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 15),
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          color: category['color'],
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Row(
-          children: [
-            Image.asset(
-              category['image']!,
-              width: 60,
-              height: 60,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Text(
-                category['name']!,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-            ),
-            const Icon(Icons.arrow_forward, color: Color(0xFF4CAF50), size: 30),
-          ],
-        ),
-      ),
+      // bottomNavigationBar removed
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:montelimart/user/user_detail_produk.dart';
 import 'package:montelimart/user/user_kategori.dart';
+import 'package:montelimart/supabase_services.dart';
 
 class userscreen extends StatefulWidget {
   const userscreen({super.key});
@@ -13,113 +14,23 @@ class _userscreenState extends State<userscreen> {
   int _selectedIndex = 0;
   int _selectedCategoryIndex = 0;
 
-  final List<Map<String, dynamic>> _allProducts = [
-    {
-      'name': 'Yakult',
-      'sub_title': 'Minuman Susu Fermentasi S⁺ 65 ml',
-      'price': 'Rp 10.500',
-      'image': 'assets/minuman/yakult.png',
-      'category': 'Drinks',
-      'description_points': [
-        'Contains good bacteria L. casei Shirota',
-        'Helps maintain good digestion',
-        'Does not contain fat and cholesterol',
-        'Without added preservatives or artificial colors',
-        'Volume: 65 ml per bottle',
-        'Packaging: 5 bottles per pack',
-        'Producer: Yakult Indonesia Persada',
-      ],
-    },
-    {
-      'name': 'Ultra Milk',
-      'sub_title': 'Susu UHT Full Cream',
-      'price': 'Rp 7.900',
-      'image': 'assets/minuman/ultramilk.png',
-      'category': 'Drinks',
-      'description_points': [
-        'Full cream UHT milk',
-        'High in calcium and vitamins',
-        'Suitable for daily consumption',
-        'Shelf-stable and convenient',
-        'Volume: 250 ml',
-        'Producer: Ultrajaya Milk Industry',
-      ],
-    },
-    {
-      'name': 'Marjan Boudouin Syrup',
-      'sub_title': 'Melon',
-      'price': 'Rp 26.900',
-      'image': 'assets/minuman/marjan.png',
-      'category': 'Drinks',
-      'description_points': [
-        'Melon flavored syrup',
-        'Refreshing and sweet',
-        'Great for drinks and desserts',
-        'Volume: 460 ml',
-        'Producer: PT. Lasallefood Indonesia',
-      ],
-    },
-    {
-      'name': 'Teh Pucuk Harum',
-      'sub_title': 'Melati',
-      'price': 'Rp 3.200',
-      'image': 'assets/minuman/pucuk.png',
-      'category': 'Drinks',
-      'description_points': [
-        'Jasmine tea ready to drink',
-        'Authentic tea flavor',
-        'No artificial sweeteners',
-        'Volume: 250 ml',
-        'Producer: PT. Mayora Indah Tbk',
-      ],
-    },
-    {
-      'name': 'Aqua',
-      'sub_title': 'Air Mineral',
-      'price': 'Rp 6.900',
-      'image': 'assets/minuman/aqua.png',
-      'category': 'Drinks',
-      'description_points': [
-        'Pure mineral water',
-        'Hydrating and refreshing',
-        'Sourced from natural springs',
-        'Volume: 600 ml',
-        'Producer: Danone AQUA',
-      ],
-    },
-    {
-      'name': 'Chitato',
-      'sub_title': 'Potato Chips',
-      'price': 'Rp 8.000',
-      'image': 'assets/makanan ringan/CHITATO.png',
-      'category': 'snacks',
-      'description_points': [
-        'Crispy potato chips',
-        'Various flavors available',
-        'Perfect for snacking',
-      ],
-    },
-    {
-      'name': 'good day',
-      'sub_title': 'coffee',
-      'price': 'Rp 5.000',
-      'image': 'assets/minuman/gooday.png',
-      'category': 'Drinks',
-      'description_point': [
-        'Coffee ready to drink',
-        'Authentic coffee flavor',
-        'No artificial sweeteners',
-      ],
-    },
-    {},
-  ];
-
+  List<Map<String, dynamic>> _allProducts = [];
   late List<Map<String, dynamic>> _filteredProducts;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    fetchProducts();
+  }
+
+  Future<void> fetchProducts() async {
+    // Ambil produk dari semua tabel via SupabaseService
+    _allProducts = await SupabaseService().getAllProduk();
     _filterProductsByCategory();
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   void _onItemTapped(int index) {
@@ -128,15 +39,13 @@ class _userscreenState extends State<userscreen> {
     });
   }
 
-  // Method untuk mengubah kategori yang dipilih dan memperbarui produk
   void _onCategoryChipTapped(int index) {
     setState(() {
       _selectedCategoryIndex = index;
-      _filterProductsByCategory(); // Filter ulang produk
+      _filterProductsByCategory();
     });
   }
 
-  // Method untuk memfilter produk berdasarkan kategori yang dipilih
   void _filterProductsByCategory() {
     final List<String> categories = [
       'Drinks',
@@ -149,19 +58,12 @@ class _userscreenState extends State<userscreen> {
     String selectedCategoryName = categories[_selectedCategoryIndex];
 
     if (selectedCategoryName == 'All' || selectedCategoryName == 'Drinks') {
-      // 'All' atau 'Drinks' akan menampilkan semua minuman dulu
       _filteredProducts =
-          _allProducts
-              .where((product) => product['category'] == 'Drinks')
-              .toList();
+          _allProducts.where((product) => product['category'] == 'Drinks').toList();
     } else {
       _filteredProducts =
-          _allProducts
-              .where((product) => product['category'] == selectedCategoryName)
-              .toList();
+          _allProducts.where((product) => product['category'] == selectedCategoryName).toList();
     }
-    // Jika tidak ada produk di kategori tersebut, bisa tampilkan pesan atau list kosong.
-    // Untuk pengembangan, penting untuk memiliki produk di setiap kategori.
   }
 
   @override
@@ -173,13 +75,13 @@ class _userscreenState extends State<userscreen> {
           children: [
             _buildHeaderCard(),
             const SizedBox(height: 20),
-            _buildProductCategories(), // Kini akan memanggil method non-static
+            _buildProductCategories(),
             const SizedBox(height: 20),
-            _buildProductsGrid(), // Kini akan memanggil method non-static
+            _buildProductsGrid(),
           ],
         ),
       ),
-      const userscreen(),
+      kategoriscreen(),
       const Center(
         child: Text('Payment Screen', style: TextStyle(fontSize: 24)),
       ),
@@ -244,7 +146,9 @@ class _userscreenState extends State<userscreen> {
           ),
         ],
       ),
-      body: _pages[_selectedIndex],
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
@@ -442,7 +346,12 @@ class _userscreenState extends State<userscreen> {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const kategoriscreen()),
+                  );
+                },
                 child: const Text(
                   'See all',
                   style: TextStyle(color: Colors.blue, fontSize: 14),
@@ -497,7 +406,17 @@ class _userscreenState extends State<userscreen> {
   }
 
   Widget _buildProductsGrid() {
-    // Gunakan _filteredProducts, bukan _allProducts
+    final List<Color?> cardColors = [
+      Color(0xFFE6F7FF),
+      Color(0xFFFFF9E6),
+      Color(0xFFF3E6FF),
+      Color(0xFFFFE6F0),
+      Color(0xFFE6FFF2),
+      Color(0xFFFFF3E6),
+      Color(0xFFE6F0FF),
+      Color(0xFFFFE6E6),
+    ];
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: GridView.builder(
@@ -507,14 +426,101 @@ class _userscreenState extends State<userscreen> {
           crossAxisCount: 2,
           crossAxisSpacing: 16.0,
           mainAxisSpacing: 16.0,
-          childAspectRatio: 0.7,
+          childAspectRatio: 0.68,
         ),
-        itemCount:
-            _filteredProducts.length, // <-- Gunakan _filteredProducts.length
-        itemBuilder: (context, index) {
-          return _buildProductCard(
-            _filteredProducts[index],
-          ); // <-- Gunakan _filteredProducts[index]
+        itemCount: _filteredProducts.length,
+        itemBuilder: (context, idx) {
+          final product = _filteredProducts[idx];
+          final color = cardColors[idx % cardColors.length] ?? Colors.white;
+          final nama = product['name'] ?? '';
+          final harga = product['price'] ?? '';
+          final gambar = product['image'] ?? '';
+
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => user_detail_produkscreen(product: product),
+                ),
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12, left: 12, right: 12),
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: gambar.isNotEmpty
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                gambar,
+                                fit: BoxFit.contain,
+                                errorBuilder: (c, e, s) => const Icon(Icons.image, size: 48, color: Colors.grey),
+                              ),
+                            )
+                          : Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(Icons.image, size: 48, color: Colors.grey),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      nama,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
+                    child: Row(
+                      children: [
+                        Text(
+                          harga,
+                          style: const TextStyle(
+                            color: Colors.teal,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                        const Spacer(),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.teal,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.shopping_bag_outlined, color: Colors.white),
+                            onPressed: () {
+                              // TODO: Tambahkan ke keranjang
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
         },
       ),
     );
