@@ -94,22 +94,22 @@ class _RegisterUserState extends State<RegisterUser> {
           email: email,
           password: password,
           username: username,
-          tanggalLahir: _selectedDate,
-        );
+      tanggalLahir: _selectedDate,
+    );
         
         if (error == null && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Registrasi berhasil! Silakan login.')),
-          );
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => LoginUser()),
-          );
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginUser()),
+      );
         } else if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Registrasi gagal: $error')),
-          );
-        }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registrasi gagal: $error')),
+      );
+    }
       }
     } on TimeoutException catch (e) {
       if (mounted) {
@@ -141,7 +141,7 @@ class _RegisterUserState extends State<RegisterUser> {
       }
     } finally {
       if (mounted) {
-        setState(() => _isLoading = false);
+    setState(() => _isLoading = false);
       }
     }
   }

@@ -53,15 +53,15 @@ class _userscreenState extends State<userscreen> {
     } catch (e) {
       print('Error fetch produk: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal mengambil produk: $e')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal mengambil produk: $e')),
+      );
+    }
     } finally {
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+    setState(() {
+      _isLoading = false;
+    });
       }
     }
   }
