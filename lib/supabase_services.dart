@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../main.dart'; // akses global supabase client
@@ -431,11 +432,17 @@ class SupabaseService {
     DateTime? tanggalLahir,
   }) async {
     try {
-      // 1. Register ke Supabase Auth
+      // 1. Register ke Supabase Auth dengan auto-confirm
       final response = await Supabase.instance.client.auth.signUp(
         email: email,
         password: password,
+        emailRedirectTo: null, // Tidak ada redirect
+        data: {
+          'username': username,
+          'tanggal_lahir': tanggalLahir?.toIso8601String(),
+        },
       );
+      
       final user = response.user;
       if (user == null) {
         return 'Registrasi gagal: user null';
@@ -458,6 +465,67 @@ class SupabaseService {
       return 'Registrasi gagal: ${e.message}';
     } catch (e) {
       return 'Registrasi gagal: $e';
+    }
+  }
+
+  // Fungsi baru untuk auto-login setelah registrasi
+  Future<Map<String, dynamic>?> registerAndLogin({
+    required String email,
+    required String password,
+    required String username,
+    DateTime? tanggalLahir,
+  }) async {
+    try {
+      // 1. Register ke Supabase Auth dengan auto-confirm
+      final response = await Supabase.instance.client.auth.signUp(
+        email: email,
+        password: password,
+        emailRedirectTo: null, // Tidak ada redirect
+        data: {
+          'username': username,
+          'tanggal_lahir': tanggalLahir?.toIso8601String(),
+        },
+      );
+      
+      final user = response.user;
+      if (user == null) {
+        return null; // registrasi gagal
+      }
+
+      // 2. Insert data tambahan ke tabel user_registrasi
+      await Supabase.instance.client.from('user_registrasi').insert({
+        'user_id': user.id,
+        'email': email,
+        'username': username,
+        'tanggal_lahir': tanggalLahir?.toIso8601String(),
+      });
+
+      // 3. Langsung login setelah registrasi
+      final loginResponse = await Supabase.instance.client.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+
+      if (loginResponse.user != null) {
+        // Ambil data user tambahan
+        final userData = await Supabase.instance.client
+            .from('user_registrasi')
+            .select()
+            .eq('email', email)
+            .maybeSingle();
+
+        return userData;
+      }
+
+      return null;
+    } on PostgrestException catch (e) {
+      if (e.code == '23505') {
+        // Duplicate key (username/email sudah ada)
+        return null;
+      }
+      return null;
+    } catch (e) {
+      return null;
     }
   }
 
@@ -491,74 +559,112 @@ class SupabaseService {
   }
 
   Future<List<Map<String, dynamic>>> getAllProduk() async {
-    final minuman = await supabase.from('minuman').select();
-    final makanan = await supabase.from('makanan').select();
-    final mainan = await supabase.from('mainan').select();
-    final roti = await supabase.from('roti').select();
-    final rumahtangga = await supabase.from('rumahtangga').select();
+    try {
+      // Tambahkan timeout untuk mencegah hang
+      final minuman = await supabase.from('minuman').select().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw TimeoutException('Timeout mengambil data minuman');
+        },
+      );
+      
+      final makanan = await supabase.from('makanan').select().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw TimeoutException('Timeout mengambil data makanan');
+        },
+      );
+      
+      final mainan = await supabase.from('mainan').select().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw TimeoutException('Timeout mengambil data mainan');
+        },
+      );
+      
+      final roti = await supabase.from('roti').select().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw TimeoutException('Timeout mengambil data roti');
+        },
+      );
+      
+      final rumahtangga = await supabase.from('rumahtangga').select().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw TimeoutException('Timeout mengambil data rumahtangga');
+        },
+      );
 
-    List<Map<String, dynamic>> produk = [];
+      List<Map<String, dynamic>> produk = [];
 
-    produk.addAll(List<Map<String, dynamic>>.from(minuman).map((e) => {
-      'id_minuman': e['id_minuman'],
-      'id_kategori': e['id_kategori'],
-      'nama_kategori': e['nama_kategori'],
-      'name': e['nama_minuman'],
-      'sub_title': '',
-      'price': 'Rp ${e['harga_jual'] ?? 0}',
-      'image': e['gambar_barang'] ?? '',
-      'category': 'Drinks',
-      'description_points': [e['deskripsi_barang'] ?? ''],
-    }));
+      produk.addAll(List<Map<String, dynamic>>.from(minuman).map((e) => {
+        'id_minuman': e['id_minuman'],
+        'id_kategori': e['id_kategori'],
+        'nama_kategori': e['nama_kategori'],
+        'name': e['nama_minuman'],
+        'sub_title': '',
+        'price': 'Rp ${e['harga_jual'] ?? 0}',
+        'image': e['gambar_barang'] ?? '',
+        'category': 'Drinks',
+        'description_points': [e['deskripsi_barang'] ?? ''],
+      }));
 
-    produk.addAll(List<Map<String, dynamic>>.from(makanan).map((e) => {
-      'id_makanan': e['id_makanan'],
-      'id_kategori': e['id_kategori'],
-      'nama_kategori': e['nama_kategori'],
-      'name': e['nama_makanan'],
-      'sub_title': '',
-      'price': 'Rp ${e['harga_jual'] ?? 0}',
-      'image': e['gambar_barang'] ?? '',
-      'category': 'snacks', // Pastikan ini 'snacks' jika ingin tampil di tab snack
-      'description_points': [e['deskripsi_barang'] ?? ''],
-    }));
+      produk.addAll(List<Map<String, dynamic>>.from(makanan).map((e) => {
+        'id_makanan': e['id_makanan'],
+        'id_kategori': e['id_kategori'],
+        'nama_kategori': e['nama_kategori'],
+        'name': e['nama_makanan'],
+        'sub_title': '',
+        'price': 'Rp ${e['harga_jual'] ?? 0}',
+        'image': e['gambar_barang'] ?? '',
+        'category': 'snacks', // Pastikan ini 'snacks' jika ingin tampil di tab snack
+        'description_points': [e['deskripsi_barang'] ?? ''],
+      }));
 
-    produk.addAll(List<Map<String, dynamic>>.from(mainan).map((e) => {
-      'id_mainan': e['id_mainan'],
-      'id_kategori': e['id_kategori'],
-      'nama_kategori': e['nama_kategori'],
-      'name': e['nama_mainan'],
-      'sub_title': '',
-      'price': 'Rp ${e['harga_jual'] ?? 0}',
-      'image': e['gambar_barang'] ?? '',
-      'category': 'toys',
-      'description_points': [e['deskripsi_barang'] ?? ''],
-    }));
+      produk.addAll(List<Map<String, dynamic>>.from(mainan).map((e) => {
+        'id_mainan': e['id_mainan'],
+        'id_kategori': e['id_kategori'],
+        'nama_kategori': e['nama_kategori'],
+        'name': e['nama_mainan'],
+        'sub_title': '',
+        'price': 'Rp ${e['harga_jual'] ?? 0}',
+        'image': e['gambar_barang'] ?? '',
+        'category': 'toys',
+        'description_points': [e['deskripsi_barang'] ?? ''],
+      }));
 
-    produk.addAll(List<Map<String, dynamic>>.from(roti).map((e) => {
-      'id_roti': e['id_roti'],
-      'id_kategori': e['id_kategori'],
-      'nama_kategori': e['nama_kategori'],
-      'name': e['nama_roti'],
-      'sub_title': '',
-      'price': 'Rp ${e['harga_jual'] ?? 0}',
-      'image': e['gambar_barang'] ?? '',
-      'category': 'bread & cakes',
-      'description_points': [e['deskripsi_barang'] ?? ''],
-    }));
+      produk.addAll(List<Map<String, dynamic>>.from(roti).map((e) => {
+        'id_roti': e['id_roti'],
+        'id_kategori': e['id_kategori'],
+        'nama_kategori': e['nama_kategori'],
+        'name': e['nama_roti'],
+        'sub_title': '',
+        'price': 'Rp ${e['harga_jual'] ?? 0}',
+        'image': e['gambar_barang'] ?? '',
+        'category': 'bread & cakes',
+        'description_points': [e['deskripsi_barang'] ?? ''],
+      }));
 
-    produk.addAll(List<Map<String, dynamic>>.from(rumahtangga).map((e) => {
-      'id_rumahtangga': e['id_rumahtangga'],
-      'id_kategori': e['id_kategori'],
-      'nama_kategori': e['nama_kategori'],
-      'name': e['nama_barang'],
-      'sub_title': '',
-      'price': 'Rp ${e['harga_jual'] ?? 0}',
-      'image': e['gambar_barang'] ?? '',
-      'category': 'toiletries',
-      'description_points': [e['deskripsi_barang'] ?? ''],
-    }));
+      produk.addAll(List<Map<String, dynamic>>.from(rumahtangga).map((e) => {
+        'id_rumahtangga': e['id_rumahtangga'],
+        'id_kategori': e['id_kategori'],
+        'nama_kategori': e['nama_kategori'],
+        'name': e['nama_barang'],
+        'sub_title': '',
+        'price': 'Rp ${e['harga_jual'] ?? 0}',
+        'image': e['gambar_barang'] ?? '',
+        'category': 'toiletries',
+        'description_points': [e['deskripsi_barang'] ?? ''],
+      }));
 
-    return produk;
+      return produk;
+    } on TimeoutException catch (e) {
+      print('Timeout error in getAllProduk: $e');
+      rethrow;
+    } catch (e) {
+      print('Error in getAllProduk: $e');
+      rethrow;
+    }
   }
 }

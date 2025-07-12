@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:montelimart/auth/login_user.dart';
 import 'package:montelimart/supabase_services.dart';
+import 'package:montelimart/user/user.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:async';
 
 class RegisterUser extends StatefulWidget {
   const RegisterUser({super.key});
@@ -18,98 +20,130 @@ class _RegisterUserState extends State<RegisterUser> {
   DateTime? _selectedDate;
   bool _isLoading = false;
 
-  Future<String?> registerUser({
-    required String email,
-    required String password,
-    required String username,
-    DateTime? tanggalLahir,
-  }) async {
-    try {
-      // 1. Register ke Supabase Auth
-      final response = await Supabase.instance.client.auth.signUp(
-        email: email,
-        password: password,
-      );
-      final user = response.user;
-      if (user == null) {
-        return 'Registrasi gagal: user null';
-      }
-
-      // 2. Insert data tambahan ke tabel user_registrasi
-      await Supabase.instance.client.from('user_registrasi').insert({
-        'user_id': user.id, // gunakan id dari Supabase Auth
-        'email': email,
-        'username': username,
-        'tanggal_lahir': tanggalLahir?.toIso8601String(),
-      });
-
-      return null; // sukses
-    } on PostgrestException catch (e) {
-      if (e.code == '23505') {
-        // Duplicate key (username/email sudah ada)
-        return 'Username atau email sudah digunakan!';
-      }
-      return 'Registrasi gagal: ${e.message}';
-    } catch (e) {
-      return 'Registrasi gagal: $e';
-    }
-  }
-
-  Future<Map<String, dynamic>?> loginUser({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      // 1. Login ke Supabase Auth
-      final response = await Supabase.instance.client.auth.signInWithPassword(
-        email: email,
-        password: password,
-      );
-      final user = response.user;
-      if (user == null) {
-        return null; // login gagal
-      }
-
-      // 2. Ambil data user tambahan dari tabel user_registrasi
-      final userData = await Supabase.instance.client
-          .from('user_registrasi')
-          .select()
-          .eq('email', email)
-          .maybeSingle();
-
-      return userData; // bisa null jika tidak ada
-    } catch (e) {
-      // Tangani error login
-      return null;
-    }
+  // Validasi email
+  bool _isValidEmail(String email) {
+    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
 
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
+    
+    // Validasi input
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+    final username = _usernameController.text.trim();
+
+    if (email.isEmpty || password.isEmpty || username.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Semua field harus diisi!')),
+      );
+      return;
+    }
+
+    if (!_isValidEmail(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Format email tidak valid!')),
+      );
+      return;
+    }
+
+    if (password.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password minimal 6 karakter!')),
+      );
+      return;
+    }
+
+    if (_selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Tanggal lahir harus diisi!')),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
 
-    final error = await registerUser(
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
-      username: _usernameController.text.trim(),
-      tanggalLahir: _selectedDate,
-    );
-    if (error == null) {
-      // Registrasi sukses
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registrasi berhasil! Silakan login.')),
+    try {
+      // Gunakan fungsi registerAndLogin untuk langsung login setelah registrasi
+      final userData = await SupabaseService().registerAndLogin(
+        email: email,
+        password: password,
+        username: username,
+        tanggalLahir: _selectedDate,
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          throw TimeoutException('Registrasi timeout. Cek koneksi internet Anda.');
+        },
       );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginUser()),
-      );
-    } else {
-      // Tampilkan error ke user
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registrasi gagal: $error')),
-      );
+
+      if (userData != null && mounted) {
+        // Registrasi dan login sukses
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registrasi berhasil! Selamat datang!')),
+        );
+        
+        // Langsung masuk ke aplikasi
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => userscreen()),
+        );
+      } else if (mounted) {
+        // Coba registrasi biasa jika auto-login gagal
+        final error = await SupabaseService().registerUser(
+          email: email,
+          password: password,
+          username: username,
+          tanggalLahir: _selectedDate,
+        );
+        
+        if (error == null && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Registrasi berhasil! Silakan login.')),
+          );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginUser()),
+          );
+        } else if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Registrasi gagal: $error')),
+          );
+        }
+      }
+    } on TimeoutException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.message}')),
+        );
+      }
+    } on AuthException catch (e) {
+      if (mounted) {
+        String errorMessage = 'Registrasi gagal!';
+        if (e.message.contains('User already registered')) {
+          errorMessage = 'Email sudah terdaftar!';
+        } else if (e.message.contains('Invalid email')) {
+          errorMessage = 'Format email tidak valid!';
+        } else if (e.message.contains('Password should be at least')) {
+          errorMessage = 'Password terlalu pendek!';
+        }
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        print('Register error: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Terjadi kesalahan: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
-    setState(() => _isLoading = false);
   }
 
   Future<void> _pickDate() async {
@@ -125,6 +159,14 @@ class _RegisterUserState extends State<RegisterUser> {
         _selectedDate = picked;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -165,6 +207,7 @@ class _RegisterUserState extends State<RegisterUser> {
                   SizedBox(height: 32),
                   TextFormField(
                     controller: _usernameController,
+                    enabled: !_isLoading,
                     decoration: InputDecoration(
                       hintText: 'Username',
                       border: OutlineInputBorder(
@@ -178,6 +221,8 @@ class _RegisterUserState extends State<RegisterUser> {
                   SizedBox(height: 16),
                   TextFormField(
                     controller: _emailController,
+                    enabled: !_isLoading,
+                    keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       hintText: 'E-mail',
                       border: OutlineInputBorder(
@@ -185,12 +230,20 @@ class _RegisterUserState extends State<RegisterUser> {
                       ),
                       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
-                    validator: (val) =>
-                        val == null || !val.contains('@') ? 'Email tidak valid' : null,
+                    validator: (val) {
+                      if (val == null || val.isEmpty) {
+                        return 'Email wajib diisi';
+                      }
+                      if (!_isValidEmail(val.trim())) {
+                        return 'Format email tidak valid';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(height: 16),
                   TextFormField(
                     controller: _passwordController,
+                    enabled: !_isLoading,
                     obscureText: true,
                     decoration: InputDecoration(
                       hintText: 'Password',
@@ -199,14 +252,22 @@ class _RegisterUserState extends State<RegisterUser> {
                       ),
                       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
-                    validator: (val) =>
-                        val == null || val.length < 6 ? 'Password minimal 6 karakter' : null,
+                    validator: (val) {
+                      if (val == null || val.isEmpty) {
+                        return 'Password wajib diisi';
+                      }
+                      if (val.length < 6) {
+                        return 'Password minimal 6 karakter';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(height: 16),
                   GestureDetector(
-                    onTap: _pickDate,
+                    onTap: _isLoading ? null : _pickDate,
                     child: AbsorbPointer(
                       child: TextFormField(
+                        enabled: !_isLoading,
                         decoration: InputDecoration(
                           hintText: _selectedDate == null
                               ? 'Tanggal Lahir'
@@ -234,7 +295,14 @@ class _RegisterUserState extends State<RegisterUser> {
                       ),
                       onPressed: _isLoading ? null : _register,
                       child: _isLoading
-                          ? CircularProgressIndicator(color: Colors.white)
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
                           : Text(
                               'Register',
                               style: TextStyle(fontSize: 18, color: Colors.white),
@@ -247,7 +315,7 @@ class _RegisterUserState extends State<RegisterUser> {
                     children: [
                       Text("Already have an account?"),
                       TextButton(
-                        onPressed: () {
+                        onPressed: _isLoading ? null : () {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(builder: (context) => LoginUser()),

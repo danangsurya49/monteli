@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:montelimart/user/user_detail_produk.dart';
 import 'package:montelimart/user/user_kategori.dart';
 import 'package:montelimart/user/user_payment.dart';
@@ -35,17 +36,34 @@ class _userscreenState extends State<userscreen> {
 
   Future<void> fetchProducts() async {
     try {
-      _allProducts = await SupabaseService().getAllProduk();
+      _allProducts = await SupabaseService().getAllProduk().timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          throw TimeoutException('Timeout mengambil data produk. Cek koneksi internet Anda.');
+        },
+      );
       _filterProductsByCategory();
+    } on TimeoutException catch (e) {
+      print('Timeout error fetch produk: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.message}')),
+        );
+      }
     } catch (e) {
       print('Error fetch produk: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal mengambil produk: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal mengambil produk: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   void _onItemTapped(int index) {
