@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:montelimart/admin/admin_sales.dart';
 import 'package:montelimart/admin/admin_stock1.dart';
 import 'package:montelimart/supabase_services.dart';
+import 'package:montelimart/auth/login_user.dart'; // Impor layar LoginUser
 
 class AdminHome extends StatefulWidget {
   AdminHome({super.key});
@@ -67,7 +68,7 @@ class _AdminHomeState extends State<AdminHome> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Card Profile Admin
+              // Kartu Profil Admin
               Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -118,7 +119,7 @@ class _AdminHomeState extends State<AdminHome> {
                 ),
                 child: Column(
                   children: [
-                    Text('Total Sales', style: TextStyle(color: Colors.white)),
+                    Text('Total Penjualan', style: TextStyle(color: Colors.white)),
                     SizedBox(height: 8),
                     Container(
                       padding: EdgeInsets.all(16),
@@ -152,8 +153,8 @@ class _AdminHomeState extends State<AdminHome> {
                           MaterialPageRoute(builder: (context) => AdminSales()),
                         );
                       },
-                      child: Text('Sales',
-                        style: TextStyle(color: Colors.white)),
+                      child: Text('Penjualan',
+                          style: TextStyle(color: Colors.white)),
                     ),
                   ),
                   SizedBox(width: 16),
@@ -168,19 +169,36 @@ class _AdminHomeState extends State<AdminHome> {
                           MaterialPageRoute(builder: (context) => AdminStock1()),
                         );
                       },
-                      child: Text('Stock',
-                        style: TextStyle(color: Colors.white)),
+                      child: Text('Stok',
+                          style: TextStyle(color: Colors.white)),
                     ),
                   ),
                 ],
               ),
               SizedBox(height: 12),
-                ElevatedButton(
+              ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueGrey,
                 ),
                 onPressed: () {},
-                child: Text('Home',
+                child: Text('Beranda',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              SizedBox(height: 12), // Menambahkan spasi untuk tombol baru
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red, // Mengubah warna untuk tombol logout
+                ),
+                onPressed: () {
+                  // Navigasi kembali ke layar LoginUser
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginUser()),
+                  );
+                },
+                child: Text(
+                  'Keluar', // Teks tombol Logout
                   style: TextStyle(color: Colors.white),
                 ),
               ),
