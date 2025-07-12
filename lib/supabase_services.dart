@@ -599,7 +599,7 @@ class SupabaseService {
       List<Map<String, dynamic>> produk = [];
 
       produk.addAll(List<Map<String, dynamic>>.from(minuman).map((e) => {
-        'id_minuman': e['id_minuman'],
+        'id_barang': e['id_barang'],
         'id_kategori': e['id_kategori'],
         'nama_kategori': e['nama_kategori'],
         'name': e['nama_minuman'],
@@ -611,19 +611,19 @@ class SupabaseService {
       }));
 
       produk.addAll(List<Map<String, dynamic>>.from(makanan).map((e) => {
-        'id_makanan': e['id_makanan'],
+        'id_barang': e['id_barang'],
         'id_kategori': e['id_kategori'],
         'nama_kategori': e['nama_kategori'],
         'name': e['nama_makanan'],
         'sub_title': '',
         'price': 'Rp ${e['harga_jual'] ?? 0}',
         'image': e['gambar_barang'] ?? '',
-        'category': 'snacks', // Pastikan ini 'snacks' jika ingin tampil di tab snack
+        'category': 'snacks',
         'description_points': [e['deskripsi_barang'] ?? ''],
       }));
 
       produk.addAll(List<Map<String, dynamic>>.from(mainan).map((e) => {
-        'id_mainan': e['id_mainan'],
+        'id_barang': e['id_barang'],
         'id_kategori': e['id_kategori'],
         'nama_kategori': e['nama_kategori'],
         'name': e['nama_mainan'],
@@ -635,7 +635,7 @@ class SupabaseService {
       }));
 
       produk.addAll(List<Map<String, dynamic>>.from(roti).map((e) => {
-        'id_roti': e['id_roti'],
+        'id_barang': e['id_barang'],
         'id_kategori': e['id_kategori'],
         'nama_kategori': e['nama_kategori'],
         'name': e['nama_roti'],
@@ -647,7 +647,7 @@ class SupabaseService {
       }));
 
       produk.addAll(List<Map<String, dynamic>>.from(rumahtangga).map((e) => {
-        'id_rumahtangga': e['id_rumahtangga'],
+        'id_barang': e['id_barang'],
         'id_kategori': e['id_kategori'],
         'nama_kategori': e['nama_kategori'],
         'name': e['nama_barang'],

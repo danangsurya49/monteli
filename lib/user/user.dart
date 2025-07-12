@@ -102,7 +102,7 @@ class _userscreenState extends State<userscreen> {
   void addToCart(Map<String, dynamic> product) {
     final cart = List<Map<String, dynamic>>.from(box.read('cart') ?? []);
     cart.add({
-      'id_barang': product['id_minuman'] ?? product['id_makanan'] ?? product['id_mainan'] ?? product['id_roti'] ?? product['id_rumahtangga'] ?? '',
+      'id_barang': product['id_barang'] ?? '',
       'id_kategori': product['id_kategori'] ?? '',
       'user_id': 'dummy-user-uuid', // Ganti dengan UUID user login jika ada
       'nama_kategori': product['nama_kategori'] ?? '',
