@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:montelimart/supabase_services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:montelimart/user/user.dart';
 
 class userpayment extends StatefulWidget {
   const userpayment({super.key});
@@ -89,7 +90,11 @@ class _userpaymentState extends State<userpayment> {
       box.remove('cart');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Transaction successful!')));
-        Navigator.pop(context);
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const userscreen()),
+          (route) => false,
+        );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $e')));

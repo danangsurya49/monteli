@@ -668,3 +668,58 @@ class SupabaseService {
     }
   }
 }
+
+Future<String?> uploadGambarBarang({
+  required File file,
+  required String idBarang,
+  required String namaTabel, // contoh: 'mainan', 'makanan', 'minuman', 'roti', 'rumahtangga'
+}) async {
+  try {
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}_${file.path.split('/').last}';
+    await Supabase.instance.client
+        .storage
+        .from('gambar-barang')
+        .upload(fileName, file);
+
+    final publicUrl = Supabase.instance.client
+        .storage
+        .from('gambar-barang')
+        .getPublicUrl(fileName);
+
+    final updateResponse = await Supabase.instance.client
+        .from(namaTabel)
+        .update({'gambar_barang': publicUrl})
+        .eq('id_barang', idBarang);
+
+    // Jika updateResponse isinya list/map, cek error di situ jika perlu
+    return publicUrl;
+  } catch (e) {
+    // Handle error upload/update
+    return null;
+  }
+}
+
+Future<String?> uploadGambarKategori(File file, String idKategori) async {
+  try {
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}_${file.path.split('/').last}';
+    await Supabase.instance.client
+        .storage
+        .from('kategori')
+        .upload(fileName, file);
+
+    final publicUrl = Supabase.instance.client
+        .storage
+        .from('kategori')
+        .getPublicUrl(fileName);
+
+    final updateResponse = await Supabase.instance.client
+        .from('kategori')
+        .update({'gambar_kategori': publicUrl})
+        .eq('id_kategori', idKategori);
+
+    return publicUrl;
+  } catch (e) {
+    // Handle error upload/update
+    return null;
+  }
+}
