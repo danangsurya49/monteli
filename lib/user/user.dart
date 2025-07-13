@@ -33,6 +33,10 @@ class _userscreenState extends State<userscreen> {
   int cartItemCount = 0;
   num cartTotalPrice = 0;
 
+  String? get avatarUrlWithVersion => (avatarUrl != null && avatarUrl!.isNotEmpty)
+    ? '${avatarUrl!}?v=${DateTime.now().millisecondsSinceEpoch}'
+    : null;
+
   @override
   void initState() {
     super.initState();
@@ -163,7 +167,7 @@ class _userscreenState extends State<userscreen> {
       ),
       kategoriscreen(),
       userpayment(),
-      const UserProfil(),
+      UserProfilRefreshable(onRefresh: _loadUserAndCart),
     ];
 
     return Scaffold(
@@ -238,8 +242,8 @@ class _userscreenState extends State<userscreen> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: CircleAvatar(
-              backgroundImage: (avatarUrl != null && avatarUrl!.isNotEmpty)
-                ? NetworkImage(avatarUrl!)
+              backgroundImage: (avatarUrlWithVersion != null)
+                ? NetworkImage(avatarUrlWithVersion!)
                 : const AssetImage('assets/Montelli_Family_Logo.png') as ImageProvider,
             ),
           ),
@@ -281,8 +285,8 @@ class _userscreenState extends State<userscreen> {
             children: [
               CircleAvatar(
                 radius: 32,
-                backgroundImage: (avatarUrl != null && avatarUrl!.isNotEmpty)
-                    ? NetworkImage(avatarUrl!)
+                backgroundImage: (avatarUrlWithVersion != null)
+                    ? NetworkImage(avatarUrlWithVersion!)
                     : const AssetImage('assets/Montelli_Family_Logo.png') as ImageProvider,
               ),
               const SizedBox(width: 16),
@@ -659,5 +663,35 @@ class _userscreenState extends State<userscreen> {
         ),
       ),
     );
+  }
+}
+
+class UserProfilRefreshable extends StatelessWidget {
+  final VoidCallback onRefresh;
+  const UserProfilRefreshable({Key? key, required this.onRefresh}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return UserProfilWithCallback(onRefresh: onRefresh);
+  }
+}
+
+class UserProfilWithCallback extends StatefulWidget {
+  final VoidCallback onRefresh;
+  const UserProfilWithCallback({Key? key, required this.onRefresh}) : super(key: key);
+
+  @override
+  State<UserProfilWithCallback> createState() => _UserProfilWithCallbackState();
+}
+
+class _UserProfilWithCallbackState extends State<UserProfilWithCallback> {
+  @override
+  Widget build(BuildContext context) {
+    return UserProfil();
+  }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    widget.onRefresh();
   }
 }

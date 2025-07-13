@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:montelimart/supabase_services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class UserEditProfil extends StatefulWidget {
   const UserEditProfil({super.key});
@@ -17,7 +18,7 @@ class _UserEditProfilState extends State<UserEditProfil> {
   String? username;
   String? email;
   String? avatarUrl;
-  File? avatarFile;
+  dynamic avatarFile; // File (mobile) atau XFile (web)
   bool isLoading = true;
   String? userId;
 
@@ -52,33 +53,42 @@ class _UserEditProfilState extends State<UserEditProfil> {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
-      setState(() { avatarFile = File(picked.path); });
+      setState(() {
+        avatarFile = kIsWeb ? picked : File(picked.path);
+      });
     }
   }
 
   Future<void> _save() async {
-    setState(() { isLoading = true; });
-    String? uploadedUrl = avatarUrl;
-    if (avatarFile != null) {
-      final fileName = '${DateTime.now().millisecondsSinceEpoch}_${avatarFile!.path.split('/').last}';
-      uploadedUrl = await SupabaseService().uploadImage(
-        avatarFile!,
-        'avatars',
-        fileName,
+    try {
+      setState(() { isLoading = true; });
+      String? uploadedUrl = avatarUrl;
+      if (avatarFile != null) {
+        final fileName = '${DateTime.now().millisecondsSinceEpoch}_${kIsWeb ? avatarFile.name : avatarFile.path.split('/').last}';
+        uploadedUrl = await SupabaseService().uploadImage(
+          avatarFile,
+          'avatars',
+          fileName,
+        );
+      }
+      await updateUserRegistrasi(
+        userId: userId!,
+        avatar: uploadedUrl,
+        noTelp: noTelpController.text,
+        tanggalLahir: tanggalLahir,
+        alamat: alamatController.text,
       );
-    }
-    await updateUserRegistrasi(
-      userId: userId!,
-      avatar: uploadedUrl,
-      noTelp: noTelpController.text,
-      tanggalLahir: tanggalLahir,
-      alamat: alamatController.text,
-    );
-    if (mounted) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profil berhasil diperbarui!')),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      setState(() { isLoading = false; });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profil berhasil diperbarui!')),
+        SnackBar(content: Text('Gagal upload avatar: $e')),
       );
-      Navigator.pop(context);
     }
   }
 
@@ -111,7 +121,7 @@ class _UserEditProfilState extends State<UserEditProfil> {
                         child: CircleAvatar(
                           radius: 48,
                           backgroundImage: avatarFile != null
-                              ? FileImage(avatarFile!)
+                              ? (kIsWeb ? NetworkImage(avatarFile.path) : FileImage(avatarFile))
                               : (avatarUrl != null && avatarUrl!.isNotEmpty)
                                   ? NetworkImage(avatarUrl!)
                                   : const AssetImage('assets/Montelli_Family_Logo.png') as ImageProvider,

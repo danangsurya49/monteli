@@ -6,6 +6,7 @@ import '../main.dart'; // akses global supabase client
 import 'package:flutter/material.dart'; // Added for BuildContext
 import 'package:get_storage/get_storage.dart'; // Added for GetStorage
 import 'package:montelimart/auth/login_user.dart'; // Perbaikan import LoginUser
+import 'dart:typed_data';
 
 class SupabaseService {
   // --- KATEGORI ---
@@ -46,7 +47,10 @@ class SupabaseService {
       query = query.eq('id_kategori', idKategori);
     }
     final data = await query;
-    return List<Map<String, dynamic>>.from(data);
+    return List<Map<String, dynamic>>.from(data).map((item) => {
+      ...item,
+      'id_barang': item['id_barang'],
+    }).toList();
   }
 
   Future<void> addMinuman({
@@ -73,7 +77,7 @@ class SupabaseService {
   }
 
   Future<void> updateMinuman({
-    required String idMinuman,
+    required String idBarang,
     required String namaMinuman,
     required String idKategori,
     String? deskripsiBarang,
@@ -92,7 +96,7 @@ class SupabaseService {
       'barang_terjual': barangTerjual,
       'harga_jual': hargaJual,
       'total_penjualan': totalPenjualan,
-    }).eq('id_minuman', idMinuman);
+    }).eq('id_barang', idBarang);
   }
 
   Future<void> deleteMinuman(String idMinuman) async {
@@ -106,7 +110,10 @@ class SupabaseService {
       query = query.eq('id_kategori', idKategori);
     }
     final data = await query;
-    return List<Map<String, dynamic>>.from(data);
+    return List<Map<String, dynamic>>.from(data).map((item) => {
+      ...item,
+      'id_barang': item['id_barang'],
+    }).toList();
   }
 
   Future<void> addMakanan({
@@ -133,7 +140,7 @@ class SupabaseService {
   }
 
   Future<void> updateMakanan({
-    required String idMakanan,
+    required String idBarang,
     required String namaMakanan,
     required String idKategori,
     String? deskripsiBarang,
@@ -152,7 +159,7 @@ class SupabaseService {
       'barang_terjual': barangTerjual,
       'harga_jual': hargaJual,
       'total_penjualan': totalPenjualan,
-    }).eq('id_makanan', idMakanan);
+    }).eq('id_barang', idBarang);
   }
 
   Future<void> deleteMakanan(String idMakanan) async {
@@ -166,7 +173,10 @@ class SupabaseService {
       query = query.eq('id_kategori', idKategori);
     }
     final data = await query;
-    return List<Map<String, dynamic>>.from(data);
+    return List<Map<String, dynamic>>.from(data).map((item) => {
+      ...item,
+      'id_barang': item['id_barang'],
+    }).toList();
   }
 
   Future<void> addRoti({
@@ -193,7 +203,7 @@ class SupabaseService {
   }
 
   Future<void> updateRoti({
-    required String idRoti,
+    required String idBarang,
     required String namaRoti,
     required String idKategori,
     String? deskripsiBarang,
@@ -212,7 +222,7 @@ class SupabaseService {
       'barang_terjual': barangTerjual,
       'harga_jual': hargaJual,
       'total_penjualan': totalPenjualan,
-    }).eq('id_roti', idRoti);
+    }).eq('id_barang', idBarang);
   }
 
   Future<void> deleteRoti(String idRoti) async {
@@ -226,7 +236,10 @@ class SupabaseService {
       query = query.eq('id_kategori', idKategori);
     }
     final data = await query;
-    return List<Map<String, dynamic>>.from(data);
+    return List<Map<String, dynamic>>.from(data).map((item) => {
+      ...item,
+      'id_barang': item['id_barang'],
+    }).toList();
   }
 
   Future<void> addMainan({
@@ -253,7 +266,7 @@ class SupabaseService {
   }
 
   Future<void> updateMainan({
-    required String idMainan,
+    required String idBarang,
     required String namaMainan,
     required String idKategori,
     String? deskripsiBarang,
@@ -272,7 +285,7 @@ class SupabaseService {
       'barang_terjual': barangTerjual,
       'harga_jual': hargaJual,
       'total_penjualan': totalPenjualan,
-    }).eq('id_mainan', idMainan);
+    }).eq('id_barang', idBarang);
   }
 
   Future<void> deleteMainan(String idMainan) async {
@@ -286,7 +299,10 @@ class SupabaseService {
       query = query.eq('id_kategori', idKategori);
     }
     final data = await query;
-    return List<Map<String, dynamic>>.from(data);
+    return List<Map<String, dynamic>>.from(data).map((item) => {
+      ...item,
+      'id_barang': item['id_barang'],
+    }).toList();
   }
 
   Future<void> addRumahtangga({
@@ -313,7 +329,7 @@ class SupabaseService {
   }
 
   Future<void> updateRumahtangga({
-    required String idRumahtangga,
+    required String idBarang,
     required String namaBarang,
     required String idKategori,
     String? deskripsiBarang,
@@ -332,7 +348,7 @@ class SupabaseService {
       'barang_terjual': barangTerjual,
       'harga_jual': hargaJual,
       'total_penjualan': totalPenjualan,
-    }).eq('id_rumahtangga', idRumahtangga);
+    }).eq('id_barang', idBarang);
   }
 
   Future<void> deleteRumahtangga(String idRumahtangga) async {
@@ -399,13 +415,18 @@ class SupabaseService {
 
   // --- UPLOAD GAMBAR (opsional, jika pakai Supabase Storage) ---
   Future<String> uploadImage(
-      File file, String bucketName, String fileName) async {
-    final bytes = await file.readAsBytes();
-    await supabase.storage.from(bucketName).uploadBinary(
-          fileName,
-          bytes,
-          fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
-        );
+      dynamic fileOrXFile, String bucketName, String fileName) async {
+    try {
+      // Gunakan readAsBytes universal (XFile dan File punya method ini)
+      final bytes = await fileOrXFile.readAsBytes();
+      await supabase.storage.from(bucketName).uploadBinary(
+            fileName,
+            bytes,
+            fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
+          ).timeout(const Duration(seconds: 30));
+    } catch (e) {
+      throw Exception('Upload gagal: $e');
+    }
     final String publicUrl =
         supabase.storage.from(bucketName).getPublicUrl(fileName);
     return publicUrl;

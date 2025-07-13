@@ -77,13 +77,14 @@ class _UserProfilState extends State<UserProfil> {
                 ),
                 const SizedBox(height: 12),
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
+                  onPressed: () async {
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const UserEditProfil(),
                       ),
                     );
+                    _loadAll(); // refresh data setelah kembali dari edit profil
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF2CB9B0),

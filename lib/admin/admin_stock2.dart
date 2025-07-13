@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:montelimart/supabase_services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AdminStock2 extends StatefulWidget {
   final Map<String, dynamic>? kategori;
@@ -63,96 +63,199 @@ class _AdminStock2State extends State<AdminStock2> {
 
   Future<void> saveAll() async {
     setState(() => isLoading = true);
-    for (final item in items) {
-      switch (kategoriTable) {
-        case 'minuman':
-          await SupabaseService().updateMinuman(
-            idMinuman: item['id_minuman'],
-            namaMinuman: item['nama_minuman'],
-            idKategori: item['id_kategori'],
-            deskripsiBarang: item['deskripsi_barang'],
-            gambarBarang: item['gambar_barang'],
-            stok: int.tryParse(item['stok'].toString()) ?? 0,
-            barangTerjual: item['barang_terjual'] ?? 0,
-            hargaJual: num.tryParse(item['harga_jual'].toString()) ?? 0,
-            totalPenjualan: item['total_penjualan'] ?? 0,
-          );
-          break;
-        case 'makanan':
-          await SupabaseService().updateMakanan(
-            idMakanan: item['id_makanan'],
-            namaMakanan: item['nama_makanan'],
-            idKategori: item['id_kategori'],
-            deskripsiBarang: item['deskripsi_barang'],
-            gambarBarang: item['gambar_barang'],
-            stok: int.tryParse(item['stok'].toString()) ?? 0,
-            barangTerjual: item['barang_terjual'] ?? 0,
-            hargaJual: num.tryParse(item['harga_jual'].toString()) ?? 0,
-            totalPenjualan: item['total_penjualan'] ?? 0,
-          );
-          break;
-        case 'mainan':
-          await SupabaseService().updateMainan(
-            idMainan: item['id_mainan'],
-            namaMainan: item['nama_mainan'],
-            idKategori: item['id_kategori'],
-            deskripsiBarang: item['deskripsi_barang'],
-            gambarBarang: item['gambar_barang'],
-            stok: int.tryParse(item['stok'].toString()) ?? 0,
-            barangTerjual: item['barang_terjual'] ?? 0,
-            hargaJual: num.tryParse(item['harga_jual'].toString()) ?? 0,
-            totalPenjualan: item['total_penjualan'] ?? 0,
-          );
-          break;
-        case 'roti':
-          await SupabaseService().updateRoti(
-            idRoti: item['id_roti'],
-            namaRoti: item['nama_roti'],
-            idKategori: item['id_kategori'],
-            deskripsiBarang: item['deskripsi_barang'],
-            gambarBarang: item['gambar_barang'],
-            stok: int.tryParse(item['stok'].toString()) ?? 0,
-            barangTerjual: item['barang_terjual'] ?? 0,
-            hargaJual: num.tryParse(item['harga_jual'].toString()) ?? 0,
-            totalPenjualan: item['total_penjualan'] ?? 0,
-          );
-          break;
-        case 'rumahtangga':
-          await SupabaseService().updateRumahtangga(
-            idRumahtangga: item['id_rumahtangga'],
-            namaBarang: item['nama_barang'],
-            idKategori: item['id_kategori'],
-            deskripsiBarang: item['deskripsi_barang'],
-            gambarBarang: item['gambar_barang'],
-            stok: int.tryParse(item['stok'].toString()) ?? 0,
-            barangTerjual: item['barang_terjual'] ?? 0,
-            hargaJual: num.tryParse(item['harga_jual'].toString()) ?? 0,
-            totalPenjualan: item['total_penjualan'] ?? 0,
-          );
-          break;
+    try {
+      for (final item in items) {
+        switch (kategoriTable) {
+          case 'minuman':
+            if ((item['nama_minuman'] ?? '').toString().isEmpty) {
+              throw Exception('Nama Minuman tidak boleh kosong');
+            }
+            if ((item['id_barang'] ?? '').toString().isEmpty) {
+              // INSERT
+              await SupabaseService().addMinuman(
+                namaMinuman: item['nama_minuman'] ?? '',
+                idKategori: item['id_kategori'] ?? '',
+                deskripsiBarang: item['deskripsi_barang'] ?? '',
+                gambarBarang: item['gambar_barang'] ?? '',
+                stok: int.tryParse(item['stok'].toString()) ?? 0,
+                barangTerjual: item['barang_terjual'] ?? 0,
+                hargaJual: num.tryParse(item['harga_jual'].toString()) ?? 0,
+                totalPenjualan: item['total_penjualan'] ?? 0,
+              );
+            } else {
+              // UPDATE
+              await SupabaseService().updateMinuman(
+                idBarang: item['id_barang'] ?? '',
+                namaMinuman: item['nama_minuman'] ?? '',
+                idKategori: item['id_kategori'] ?? '',
+                deskripsiBarang: item['deskripsi_barang'] ?? '',
+                gambarBarang: item['gambar_barang'] ?? '',
+                stok: int.tryParse(item['stok'].toString()) ?? 0,
+                barangTerjual: item['barang_terjual'] ?? 0,
+                hargaJual: num.tryParse(item['harga_jual'].toString()) ?? 0,
+                totalPenjualan: item['total_penjualan'] ?? 0,
+              );
+            }
+            break;
+          case 'makanan':
+            if ((item['nama_makanan'] ?? '').toString().isEmpty) {
+              throw Exception('Nama Makanan tidak boleh kosong');
+            }
+            if ((item['id_barang'] ?? '').toString().isEmpty) {
+              await SupabaseService().addMakanan(
+                namaMakanan: item['nama_makanan'] ?? '',
+                idKategori: item['id_kategori'] ?? '',
+                deskripsiBarang: item['deskripsi_barang'] ?? '',
+                gambarBarang: item['gambar_barang'] ?? '',
+                stok: int.tryParse(item['stok'].toString()) ?? 0,
+                barangTerjual: item['barang_terjual'] ?? 0,
+                hargaJual: num.tryParse(item['harga_jual'].toString()) ?? 0,
+                totalPenjualan: item['total_penjualan'] ?? 0,
+              );
+            } else {
+              await SupabaseService().updateMakanan(
+                idBarang: item['id_barang'] ?? '',
+                namaMakanan: item['nama_makanan'] ?? '',
+                idKategori: item['id_kategori'] ?? '',
+                deskripsiBarang: item['deskripsi_barang'] ?? '',
+                gambarBarang: item['gambar_barang'] ?? '',
+                stok: int.tryParse(item['stok'].toString()) ?? 0,
+                barangTerjual: item['barang_terjual'] ?? 0,
+                hargaJual: num.tryParse(item['harga_jual'].toString()) ?? 0,
+                totalPenjualan: item['total_penjualan'] ?? 0,
+              );
+            }
+            break;
+          case 'mainan':
+            if ((item['nama_mainan'] ?? '').toString().isEmpty) {
+              throw Exception('Nama Mainan tidak boleh kosong');
+            }
+            if ((item['id_barang'] ?? '').toString().isEmpty) {
+              await SupabaseService().addMainan(
+                namaMainan: item['nama_mainan'] ?? '',
+                idKategori: item['id_kategori'] ?? '',
+                deskripsiBarang: item['deskripsi_barang'] ?? '',
+                gambarBarang: item['gambar_barang'] ?? '',
+                stok: int.tryParse(item['stok'].toString()) ?? 0,
+                barangTerjual: item['barang_terjual'] ?? 0,
+                hargaJual: num.tryParse(item['harga_jual'].toString()) ?? 0,
+                totalPenjualan: item['total_penjualan'] ?? 0,
+              );
+            } else {
+              await SupabaseService().updateMainan(
+                idBarang: item['id_barang'] ?? '',
+                namaMainan: item['nama_mainan'] ?? '',
+                idKategori: item['id_kategori'] ?? '',
+                deskripsiBarang: item['deskripsi_barang'] ?? '',
+                gambarBarang: item['gambar_barang'] ?? '',
+                stok: int.tryParse(item['stok'].toString()) ?? 0,
+                barangTerjual: item['barang_terjual'] ?? 0,
+                hargaJual: num.tryParse(item['harga_jual'].toString()) ?? 0,
+                totalPenjualan: item['total_penjualan'] ?? 0,
+              );
+            }
+            break;
+          case 'roti':
+            if ((item['nama_roti'] ?? '').toString().isEmpty) {
+              throw Exception('Nama Roti tidak boleh kosong');
+            }
+            if ((item['id_barang'] ?? '').toString().isEmpty) {
+              await SupabaseService().addRoti(
+                namaRoti: item['nama_roti'] ?? '',
+                idKategori: item['id_kategori'] ?? '',
+                deskripsiBarang: item['deskripsi_barang'] ?? '',
+                gambarBarang: item['gambar_barang'] ?? '',
+                stok: int.tryParse(item['stok'].toString()) ?? 0,
+                barangTerjual: item['barang_terjual'] ?? 0,
+                hargaJual: num.tryParse(item['harga_jual'].toString()) ?? 0,
+                totalPenjualan: item['total_penjualan'] ?? 0,
+              );
+            } else {
+              await SupabaseService().updateRoti(
+                idBarang: item['id_barang'] ?? '',
+                namaRoti: item['nama_roti'] ?? '',
+                idKategori: item['id_kategori'] ?? '',
+                deskripsiBarang: item['deskripsi_barang'] ?? '',
+                gambarBarang: item['gambar_barang'] ?? '',
+                stok: int.tryParse(item['stok'].toString()) ?? 0,
+                barangTerjual: item['barang_terjual'] ?? 0,
+                hargaJual: num.tryParse(item['harga_jual'].toString()) ?? 0,
+                totalPenjualan: item['total_penjualan'] ?? 0,
+              );
+            }
+            break;
+          case 'rumahtangga':
+            if ((item['nama_barang'] ?? '').toString().isEmpty) {
+              throw Exception('Nama Barang tidak boleh kosong');
+            }
+            if ((item['id_barang'] ?? '').toString().isEmpty) {
+              await SupabaseService().addRumahtangga(
+                namaBarang: item['nama_barang'] ?? '',
+                idKategori: item['id_kategori'] ?? '',
+                deskripsiBarang: item['deskripsi_barang'] ?? '',
+                gambarBarang: item['gambar_barang'] ?? '',
+                stok: int.tryParse(item['stok'].toString()) ?? 0,
+                barangTerjual: item['barang_terjual'] ?? 0,
+                hargaJual: num.tryParse(item['harga_jual'].toString()) ?? 0,
+                totalPenjualan: item['total_penjualan'] ?? 0,
+              );
+            } else {
+              await SupabaseService().updateRumahtangga(
+                idBarang: item['id_barang'] ?? '',
+                namaBarang: item['nama_barang'] ?? '',
+                idKategori: item['id_kategori'] ?? '',
+                deskripsiBarang: item['deskripsi_barang'] ?? '',
+                gambarBarang: item['gambar_barang'] ?? '',
+                stok: int.tryParse(item['stok'].toString()) ?? 0,
+                barangTerjual: item['barang_terjual'] ?? 0,
+                hargaJual: num.tryParse(item['harga_jual'].toString()) ?? 0,
+                totalPenjualan: item['total_penjualan'] ?? 0,
+              );
+            }
+            break;
+        }
       }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Perubahan berhasil disimpan!')),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal menyimpan: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => isLoading = false);
     }
-    setState(() => isLoading = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Perubahan berhasil disimpan!')),
-    );
-    Navigator.pop(context);
   }
 
   Future<void> _pickImage(Map<String, dynamic> item, String fieldName) async {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
-      final file = File(picked.path);
+      setState(() => isLoading = true); // Tampilkan loading selama upload
       final fileName = '${DateTime.now().millisecondsSinceEpoch}_${picked.name}';
-      final url = await SupabaseService().uploadImage(
-        file,
-        'gambar-barang', // nama bucket storage di Supabase
-        fileName,
-      );
-      setState(() {
-        item[fieldName] = url;
-      });
+      try {
+        final url = await SupabaseService()
+            .uploadImage(picked, 'gambar-barang', fileName)
+            .timeout(const Duration(seconds: 30), onTimeout: () {
+          throw Exception('Upload gambar timeout. Cek koneksi internet Anda.');
+        });
+        setState(() {
+          item[fieldName] = '$url?v=${DateTime.now().millisecondsSinceEpoch}';
+        });
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Gagal upload gambar: $e')),
+          );
+        }
+      } finally {
+        if (mounted) setState(() => isLoading = false);
+      }
     }
   }
 
@@ -163,6 +266,7 @@ class _AdminStock2State extends State<AdminStock2> {
       switch (kategoriTable) {
         case 'minuman':
           newItem = {
+            'id_barang': null,
             'id_minuman': null,
             'id_kategori': kategoriId,
             'nama_minuman': '',
@@ -176,6 +280,7 @@ class _AdminStock2State extends State<AdminStock2> {
           break;
         case 'makanan':
           newItem = {
+            'id_barang': null,
             'id_makanan': null,
             'id_kategori': kategoriId,
             'nama_makanan': '',
@@ -189,6 +294,7 @@ class _AdminStock2State extends State<AdminStock2> {
           break;
         case 'mainan':
           newItem = {
+            'id_barang': null,
             'id_mainan': null,
             'id_kategori': kategoriId,
             'nama_mainan': '',
@@ -202,6 +308,7 @@ class _AdminStock2State extends State<AdminStock2> {
           break;
         case 'roti':
           newItem = {
+            'id_barang': null,
             'id_roti': null,
             'id_kategori': kategoriId,
             'nama_roti': '',
@@ -215,6 +322,7 @@ class _AdminStock2State extends State<AdminStock2> {
           break;
         case 'rumahtangga':
           newItem = {
+            'id_barang': null,
             'id_rumahtangga': null,
             'id_kategori': kategoriId,
             'nama_barang': '',
@@ -354,6 +462,12 @@ class _AdminStock2State extends State<AdminStock2> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Tampilkan id_barang
+          Text(
+            'ID Barang:  ${item['id_barang'] ?? '-'}',
+            style: TextStyle(fontSize: 12, color: Colors.blueGrey),
+          ),
+          SizedBox(height: 4),
           // Gambar di atas button
           Center(
             child: Column(
@@ -401,11 +515,23 @@ class _AdminStock2State extends State<AdminStock2> {
                     contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
                   onChanged: (val) {
-                    item['nama_minuman'] = val;
-                    item['nama_makanan'] = val;
-                    item['nama_mainan'] = val;
-                    item['nama_roti'] = val;
-                    item['nama_barang'] = val;
+                    switch (kategoriTable) {
+                      case 'minuman':
+                        item['nama_minuman'] = val;
+                        break;
+                      case 'makanan':
+                        item['nama_makanan'] = val;
+                        break;
+                      case 'mainan':
+                        item['nama_mainan'] = val;
+                        break;
+                      case 'roti':
+                        item['nama_roti'] = val;
+                        break;
+                      case 'rumahtangga':
+                        item['nama_barang'] = val;
+                        break;
+                    }
                   },
                 ),
               ),
