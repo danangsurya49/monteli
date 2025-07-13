@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:montelimart/user/user_edit_profil.dart';
 
 class UserProfil extends StatefulWidget {
   const UserProfil({super.key});
@@ -59,9 +60,16 @@ class _UserProfilState extends State<UserProfil> {
             ),
             const SizedBox(height: 12),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const UserEditProfil(),
+                  ),
+                );
+              },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF1A3C40),
+                backgroundColor: Color(0xFF2CB9B0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -175,20 +183,24 @@ class _UserProfilState extends State<UserProfil> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 3,
-        selectedItemColor: Color(0xFF1A3C40),
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category),
-            label: 'Category',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.payment), label: 'Payment'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
-        ],
-      ),
+      // Hapus BottomNavigationBar di sini agar tidak double jika parent sudah punya navigation
+      // Jika ingin tetap ada, pastikan hanya satu yang aktif di seluruh aplikasi
+      // Untuk web, biasanya navigation bar diatur di parent/home
+      // Jadi, hapus baris berikut:
+      // bottomNavigationBar: BottomNavigationBar(
+      //   currentIndex: 3,
+      //   selectedItemColor: Color(0xFF1A3C40),
+      //   unselectedItemColor: Colors.grey,
+      //   items: const [
+      //     BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.category),
+      //       label: 'Category',
+      //     ),
+      //     BottomNavigationBarItem(icon: Icon(Icons.payment), label: 'Payment'),
+      //     BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
+      //   ],
+      // ),
     );
   }
 }

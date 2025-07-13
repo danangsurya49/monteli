@@ -4,6 +4,7 @@ import 'package:montelimart/user/user_detail_produk.dart';
 import 'package:montelimart/user/user_kategori.dart';
 import 'package:montelimart/user/user_payment.dart';
 import 'package:montelimart/user/user_cart.dart';
+import 'package:montelimart/user/user_profil.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:montelimart/supabase_services.dart';
 
@@ -126,7 +127,7 @@ class _userscreenState extends State<userscreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _pages = [
+    final List<Widget> pages = [
       SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,9 +142,7 @@ class _userscreenState extends State<userscreen> {
       ),
       kategoriscreen(),
       userpayment(),
-      const Center(
-        child: Text('Profile Screen', style: TextStyle(fontSize: 24)),
-      ),
+      const UserProfil(),
     ];
 
     return Scaffold(
@@ -210,7 +209,7 @@ class _userscreenState extends State<userscreen> {
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
-          : _pages[_selectedIndex],
+          : pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
@@ -290,7 +289,14 @@ class _userscreenState extends State<userscreen> {
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const UserProfil(),
+                            ),
+                          );
+                        },
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: Colors.white),
                           foregroundColor: Colors.white,
