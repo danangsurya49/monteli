@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:montelimart/supabase_services.dart';
 
 class UserEditProfil extends StatefulWidget {
   const UserEditProfil({super.key});
@@ -8,14 +11,76 @@ class UserEditProfil extends StatefulWidget {
 }
 
 class _UserEditProfilState extends State<UserEditProfil> {
-  // Controllers for form fields
-  final TextEditingController dobController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController address1Controller = TextEditingController();
-  final TextEditingController address2Controller = TextEditingController();
-  final TextEditingController postcodeController = TextEditingController();
-  final TextEditingController cityController = TextEditingController();
-  final TextEditingController countryController = TextEditingController();
+  final TextEditingController noTelpController = TextEditingController();
+  final TextEditingController alamatController = TextEditingController();
+  DateTime? tanggalLahir;
+  String? username;
+  String? email;
+  String? avatarUrl;
+  File? avatarFile;
+  bool isLoading = true;
+  String? userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    setState(() { isLoading = true; });
+    final user = await getUserProfile();
+    if (user != null) {
+      setState(() {
+        userId = user['user_id'];
+        username = user['username'];
+        email = user['email'];
+        avatarUrl = user['avatar'];
+        noTelpController.text = user['no_telp'] ?? '';
+        alamatController.text = user['alamat'] ?? '';
+        tanggalLahir = user['tanggal_lahir'] != null && user['tanggal_lahir'].toString().isNotEmpty
+          ? DateTime.tryParse(user['tanggal_lahir'])
+          : null;
+        isLoading = false;
+      });
+    } else {
+      setState(() { isLoading = false; });
+    }
+  }
+
+  Future<void> _pickAvatar() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      setState(() { avatarFile = File(picked.path); });
+    }
+  }
+
+  Future<void> _save() async {
+    setState(() { isLoading = true; });
+    String? uploadedUrl = avatarUrl;
+    if (avatarFile != null) {
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}_${avatarFile!.path.split('/').last}';
+      uploadedUrl = await SupabaseService().uploadImage(
+        avatarFile!,
+        'avatars',
+        fileName,
+      );
+    }
+    await updateUserRegistrasi(
+      userId: userId!,
+      avatar: uploadedUrl,
+      noTelp: noTelpController.text,
+      tanggalLahir: tanggalLahir,
+      alamat: alamatController.text,
+    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profil berhasil diperbarui!')),
+      );
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,149 +95,127 @@ class _UserEditProfilState extends State<UserEditProfil> {
         ),
         title: const Text('Edit account', style: TextStyle(color: Colors.black)),
         centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: CircleAvatar(
-              backgroundImage: NetworkImage('https://via.placeholder.com/150'),
-            ),
-          ),
-        ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16),
-              Center(
-                child: CircleAvatar(
-                  radius: 32,
-                  backgroundImage: NetworkImage('https://via.placeholder.com/100'),
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Text('Please complete your profile', style: TextStyle(color: Colors.grey, fontSize: 15)),
-              const SizedBox(height: 24),
-              TextField(
-                controller: dobController,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.calendar_today, color: Colors.grey),
-                  hintText: 'Date of birth',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  border: UnderlineInputBorder(),
-                ),
-                readOnly: true,
-                onTap: () async {
-                  DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime.now(),
-                  );
-                  if (picked != null) {
-                    dobController.text = "${picked.day}/${picked.month}/${picked.year}";
-                  }
-                },
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: phoneController,
-                keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.phone, color: Colors.grey),
-                  hintText: '+62 ID   Phone',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  border: UnderlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: address1Controller,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.location_on, color: Colors.grey),
-                  hintText: 'Address 1',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  border: UnderlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: address2Controller,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.location_on, color: Colors.grey),
-                  hintText: 'Address 2',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  border: UnderlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: postcodeController,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.confirmation_number, color: Colors.grey),
-                  hintText: 'Postcode',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  border: UnderlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: cityController,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.location_city, color: Colors.grey),
-                  hintText: 'City',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  border: UnderlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: countryController,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.public, color: Colors.grey),
-                  hintText: 'Country',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  border: UnderlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF22B89A),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    Center(
+                      child: GestureDetector(
+                        onTap: _pickAvatar,
+                        child: CircleAvatar(
+                          radius: 48,
+                          backgroundImage: avatarFile != null
+                              ? FileImage(avatarFile!)
+                              : (avatarUrl != null && avatarUrl!.isNotEmpty)
+                                  ? NetworkImage(avatarUrl!)
+                                  : const AssetImage('assets/Montelli_Family_Logo.png') as ImageProvider,
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              padding: const EdgeInsets.all(4),
+                              child: const Icon(Icons.edit, size: 20, color: Colors.black),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  onPressed: () {
-                    // Handle confirm action
-                  },
-                  child: const Text('Confirm', style: TextStyle(fontSize: 18)),
+                    const SizedBox(height: 24),
+                    TextField(
+                      enabled: false,
+                      decoration: InputDecoration(
+                        labelText: 'Username',
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.person),
+                      ),
+                      controller: TextEditingController(text: username ?? ''),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      enabled: false,
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.email),
+                      ),
+                      controller: TextEditingController(text: email ?? ''),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: noTelpController,
+                      keyboardType: TextInputType.phone,
+                      decoration: const InputDecoration(
+                        labelText: 'No. Telp',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.phone),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    GestureDetector(
+                      onTap: () async {
+                        DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: tanggalLahir ?? DateTime(2000, 1, 1),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                        );
+                        if (picked != null) {
+                          setState(() { tanggalLahir = picked; });
+                        }
+                      },
+                      child: AbsorbPointer(
+                        child: TextField(
+                          controller: TextEditingController(
+                            text: tanggalLahir != null
+                                ? "${tanggalLahir!.day}/${tanggalLahir!.month}/${tanggalLahir!.year}"
+                                : '',
+                          ),
+                          decoration: const InputDecoration(
+                            labelText: 'Tanggal Lahir',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.calendar_today),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: alamatController,
+                      maxLines: 2,
+                      decoration: const InputDecoration(
+                        labelText: 'Alamat',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.location_on),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF22B89A),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        onPressed: isLoading ? null : _save,
+                        child: const Text('Simpan', style: TextStyle(fontSize: 18)),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF22B89A),
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.category), label: 'category'),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), label: 'Payment'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
-        ],
-        currentIndex: 3,
-        onTap: (index) {
-          // Handle navigation if needed
-        },
-      ),
+            ),
     );
   }
 }

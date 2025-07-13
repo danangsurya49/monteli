@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../main.dart'; // akses global supabase client
+import 'package:flutter/material.dart'; // Added for BuildContext
+import 'package:get_storage/get_storage.dart'; // Added for GetStorage
+import 'package:montelimart/auth/login_user.dart'; // Perbaikan import LoginUser
 
 class SupabaseService {
   // --- KATEGORI ---
@@ -722,4 +725,71 @@ Future<String?> uploadGambarKategori(File file, String idKategori) async {
     // Handle error upload/update
     return null;
   }
+}
+
+// Ambil profil user dari user_registrasi
+Future<Map<String, dynamic>?> getUserProfile() async {
+  final user = Supabase.instance.client.auth.currentUser;
+  if (user != null) {
+    final data = await Supabase.instance.client
+        .from('user_registrasi')
+        .select()
+        .eq('user_id', user.id)
+        .maybeSingle();
+    if (data != null) {
+      return data;
+    }
+  }
+  return null;
+}
+
+// Ambil ringkasan cart dari GetStorage
+Map<String, dynamic> getCartSummary(GetStorage box) {
+  final cart = List<Map<String, dynamic>>.from(box.read('cart') ?? []);
+  int totalItems = 0;
+  num totalPrice = 0;
+  for (var item in cart) {
+    int qty = (item['qty'] ?? 1) is int ? (item['qty'] ?? 1) : (item['qty'] ?? 1).toInt();
+    totalItems += qty;
+    String priceStr = item['price'] ?? 'Rp 0';
+    if (priceStr.startsWith('Rp ')) {
+      priceStr = priceStr.substring(3);
+    }
+    num price = num.tryParse(priceStr) ?? 0;
+    totalPrice += price * qty;
+  }
+  return {
+    'totalItems': totalItems,
+    'totalPrice': totalPrice,
+  };
+}
+
+// Logout user
+Future<void> logoutUser(BuildContext context) async {
+  await Supabase.instance.client.auth.signOut();
+  if (context.mounted) {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const LoginUser()),
+      (route) => false,
+    );
+  }
+}
+
+Future<void> updateUserRegistrasi({
+  required String userId,
+  String? avatar,
+  String? noTelp,
+  DateTime? tanggalLahir,
+  String? alamat,
+}) async {
+  final updateData = <String, dynamic>{};
+  if (avatar != null) updateData['avatar'] = avatar;
+  if (noTelp != null) updateData['no_telp'] = noTelp;
+  if (tanggalLahir != null) updateData['tanggal_lahir'] = tanggalLahir.toIso8601String();
+  if (alamat != null) updateData['alamat'] = alamat;
+  if (updateData.isEmpty) return;
+  await Supabase.instance.client
+      .from('user_registrasi')
+      .update(updateData)
+      .eq('user_id', userId);
 }

@@ -7,6 +7,7 @@ import 'package:montelimart/user/user_cart.dart';
 import 'package:montelimart/user/user_profil.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:montelimart/supabase_services.dart';
+import 'package:montelimart/user/user_edit_profil.dart';
 
 class userscreen extends StatefulWidget {
   const userscreen({super.key});
@@ -25,6 +26,13 @@ class _userscreenState extends State<userscreen> {
   final box = GetStorage();
   int cartCount = 0;
 
+  // Tambahan untuk user info
+  String? username;
+  String? email;
+  String? avatarUrl;
+  int cartItemCount = 0;
+  num cartTotalPrice = 0;
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +40,19 @@ class _userscreenState extends State<userscreen> {
     updateCartCount();
     box.listenKey('cart', (value) {
       updateCartCount();
+    });
+    _loadUserAndCart();
+  }
+
+  Future<void> _loadUserAndCart() async {
+    final user = await getUserProfile();
+    final cart = getCartSummary(box);
+    setState(() {
+      username = user?['username'] ?? '';
+      email = user?['email'] ?? '';
+      avatarUrl = user?['avatar'] ?? '';
+      cartItemCount = cart['totalItems'] ?? 0;
+      cartTotalPrice = cart['totalPrice'] ?? 0;
     });
   }
 
@@ -149,12 +170,28 @@ class _userscreenState extends State<userscreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.grey[200],
-            child: const Icon(Icons.menu, color: Colors.black),
-          ),
+        titleSpacing: 0,
+        title: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+              child: Image.asset(
+                'assets/Montelli_Family_Logo.png',
+                height: 32,
+              ),
+            ),
+            Flexible(
+              child: Text(
+                'MontelliMart',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
         ),
         actions: [
           IconButton(
@@ -201,8 +238,9 @@ class _userscreenState extends State<userscreen> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: CircleAvatar(
-              backgroundImage:
-                  Image.network('https://via.placeholder.com/150').image,
+              backgroundImage: (avatarUrl != null && avatarUrl!.isNotEmpty)
+                ? NetworkImage(avatarUrl!)
+                : const AssetImage('assets/Montelli_Family_Logo.png') as ImageProvider,
             ),
           ),
         ],
@@ -230,154 +268,101 @@ class _userscreenState extends State<userscreen> {
 
   Widget _buildHeaderCard() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1D5A64), // Dark teal/green color
-        borderRadius: BorderRadius.circular(15),
+        color: const Color(0xFF1D5A64),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               CircleAvatar(
-                radius: 30,
-                backgroundImage:
-                    Image.network(
-                      'https://via.placeholder.com/150', // Replace with actual user profile image
-                    ).image,
+                radius: 32,
+                backgroundImage: (avatarUrl != null && avatarUrl!.isNotEmpty)
+                    ? NetworkImage(avatarUrl!)
+                    : const AssetImage('assets/Montelli_Family_Logo.png') as ImageProvider,
               ),
-              const SizedBox(width: 15),
+              const SizedBox(width: 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'MontelliMart',
-                    style: TextStyle(
+                  Text(
+                    username ?? '-',
+                    style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 24,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  const SizedBox(height: 4),
                   Text(
-                    'Discover our wide selection of products.',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
-                      fontSize: 12,
+                    email ?? '-',
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 14,
                     ),
                   ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 24),
           Row(
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Customer Name',
-                      style: TextStyle(color: Colors.white70, fontSize: 12),
-                    ),
-                    const Text(
-                      'Customer email',
-                      style: TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const UserProfil(),
-                            ),
-                          );
-                        },
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Colors.white),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: const Text(
-                          'Profile visit',
-                          style: TextStyle(fontSize: 12),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2CB9B0),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Number of orders',
+                        style: TextStyle(color: Colors.white, fontSize: 15),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '$cartItemCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(width: 15),
+              const SizedBox(width: 18),
               Expanded(
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 8,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF18E34),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Total spent',
+                        style: TextStyle(color: Colors.white, fontSize: 15),
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(8),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Rp ${cartTotalPrice.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      child: const Column(
-                        children: [
-                          Text(
-                            'Number of orders',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 10,
-                            ),
-                          ),
-                          Text(
-                            '0',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF18E34), // Orange color
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Column(
-                        children: [
-                          Text(
-                            'Total spent',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 10,
-                            ),
-                          ),
-                          Text(
-                            'RP 0.0',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],
