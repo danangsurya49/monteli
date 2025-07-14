@@ -1,4 +1,4 @@
-package com.montellimart.app
+package com.montellimart.apk
 
 import io.flutter.embedding.android.FlutterActivity
 
