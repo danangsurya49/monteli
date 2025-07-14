@@ -16,9 +16,9 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.montellimart.app"
+    namespace = "com.montellimart.apk"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -31,7 +31,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.montellimart.app"
+        applicationId = "com.montellimart.apk"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -47,9 +47,9 @@ android {
             if (keystorePropertiesFile.exists()) {
                 // Gunakan '=' untuk assignment dan getProperty("...") untuk mengambil nilai
                 storeFile = file(keystoreProperties.getProperty("storeFile"))
-                storePassword = keystoreProperties.getProperty("storePassword")
+                storePassword = keystoreProperties.getProperty("admin123")
                 keyAlias = keystoreProperties.getProperty("keyAlias")
-                keyPassword = keystoreProperties.getProperty("keyPassword")
+                keyPassword = keystoreProperties.getProperty("admin123")
             }
         }
     }
